@@ -48,4 +48,4 @@ npm start
  - [Thunder Client API tööriist](https://www.thunderclient.com/) jooskvalt API endpointidele päringute tegemiseks ja testimiseks
 
 ## API dokumentatsioon
-Siia tekib jooksvalt esialgu lihtsalt API enpointide nimekiri koos nõutud parameetritega, edaspidi tuleb OpenAPI ja Swagger.
+Siia tekib jooksvalt esialgu lihtsalt API enpointide nimekiri koos nõutud parameetritega, edaspidi tuleb [OpenAPI](https://swagger.io/specification/) ja [Swagger](https://www.npmjs.com/package/swagger-ui-express).
