@@ -10,11 +10,12 @@ Repositoorium on mõeldud toetamaks üliõpilast kursuse jooksul oma API arendam
 ### Esimene loeng 15.09.2022
 - Märksõnad
   - API
-  - NodeJS
-  - NPM
-  - TypeScript
-  - ts-node
-  - nodemon
+  - [NodeJS](https://nodejs.org/en/)
+  - [NPM](https://www.npmjs.com/)
+  - [TypeScript](https://www.typescriptlang.org/)
+  - [ts-node](https://www.npmjs.com/package/ts-node)
+  - [nodemon](https://nodemon.io/)
+  - [Issue linkimine branchiga](https://docs.github.com/en/issues/tracking-your-work-with-issues/creating-a-branch-for-an-issue)
 
 
 ## Kuidas paigaldada?
