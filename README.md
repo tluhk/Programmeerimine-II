@@ -17,6 +17,7 @@ Repositoorium on mõeldud toetamaks üliõpilast kursuse jooksul oma API arendam
   - [nodemon](https://nodemon.io/)
   - [Issue linkimine branchiga](https://docs.github.com/en/issues/tracking-your-work-with-issues/creating-a-branch-for-an-issue)
   - callback funktsioon
+  - objekti destruktureerimine
 
 
 ## Kuidas paigaldada?
