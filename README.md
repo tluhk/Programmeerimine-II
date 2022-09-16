@@ -18,6 +18,8 @@ Repositoorium on mõeldud toetamaks üliõpilast kursuse jooksul oma API arendam
   - [Issue linkimine branchiga](https://docs.github.com/en/issues/tracking-your-work-with-issues/creating-a-branch-for-an-issue)
   - [callback funktsioon](https://developer.mozilla.org/en-US/docs/Glossary/Callback_function)
   - endpoint
+  - [objekti destruktureerimine](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Destructuring_assignment)
+  - [template literal](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Template_literals)
 
 
 ## Kuidas paigaldada?
