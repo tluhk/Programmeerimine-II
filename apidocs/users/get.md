@@ -2,6 +2,7 @@
 List of all users
 
 **URL:** `/api/v1/users/`
+
 **Method** `GET`
 
 ## Success Response
@@ -29,6 +30,7 @@ List of all users
 User by id
 
 **URL:** `/api/v1/users/:id`
+
 **Method** `GET`
 
 ## Success Response
