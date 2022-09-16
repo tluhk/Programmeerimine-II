@@ -52,4 +52,11 @@ npm start
  - [Thunder Client API tööriist](https://www.thunderclient.com/) jooskvalt API endpointidele päringute tegemiseks ja testimiseks
 
 ## API dokumentatsioon
-Siia tekib jooksvalt esialgu lihtsalt API enpointide nimekiri koos nõutud parameetritega, edaspidi tuleb [OpenAPI](https://swagger.io/specification/) ja [Swagger](https://www.npmjs.com/package/swagger-ui-express).
+### Endpoindid
+
+### Kasutajatega seotud
+- Kasutajate pärimine: `GET /api/v1/users/`
+- Kasutaja pärimine id alusel: `GET /api/v1/users/:id/`
+- Kasutaja loomine: `POST /api/v1/users/`
+- Kasutaja muutmine: `GET /api/v1/users/:id/`
+- Kasutaja kustutamine: `GET /api/v1/users/:id/`
