@@ -55,8 +55,8 @@ npm start
 ### Endpoindid
 
 ### Kasutajatega seotud
-- Kasutajate pärimine: `GET /api/v1/users/`
-- Kasutaja pärimine id alusel: `GET /api/v1/users/:id/`
+- [Kasutajate pärimine](./apidocs/users/get.md#list-of-users): `GET /api/v1/users/`
+- [Kasutaja pärimine id alusel](./apidocs/users/get.md#user-by-id): `GET /api/v1/users/:id/`
 - Kasutaja loomine: `POST /api/v1/users/`
 - Kasutaja muutmine: `GET /api/v1/users/:id/`
 - Kasutaja kustutamine: `GET /api/v1/users/:id/`
