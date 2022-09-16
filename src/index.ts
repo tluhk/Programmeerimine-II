@@ -26,7 +26,6 @@ const users: IUser[] = [
     },
 ];
 
-
 app.get('/api/v1/health', (req: Request, res: Response) => {
     res.status(200).json({
         message: 'Hello world!',
@@ -62,8 +61,7 @@ app.post('/api/v1/users', (req: Request, res: Response) => {
 app.delete('/api/v1/users/:id', (req: Request, res: Response) => {
     const id = parseInt(req.params.id);
     const index = users.findIndex(element => element.id === id);
-    console.log(index);
-    if (!index) {
+    if (index === -1) {
         return res.status(404).json({
             success: false,
             message: `User not found`,
