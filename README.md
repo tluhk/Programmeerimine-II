@@ -16,8 +16,8 @@ Repositoorium on mõeldud toetamaks üliõpilast kursuse jooksul oma API arendam
   - [ts-node](https://www.npmjs.com/package/ts-node)
   - [nodemon](https://nodemon.io/)
   - [Issue linkimine branchiga](https://docs.github.com/en/issues/tracking-your-work-with-issues/creating-a-branch-for-an-issue)
-  - callback funktsioon
-  - objekti destruktureerimine
+  - [callback funktsioon](https://developer.mozilla.org/en-US/docs/Glossary/Callback_function)
+  - endpoint
 
 
 ## Kuidas paigaldada?
