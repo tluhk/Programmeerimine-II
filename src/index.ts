@@ -8,11 +8,14 @@ interface INewUser {
     firstName: string;
     lastName: string;
     email: string;
-    password: string;
 }
 
 interface IUser extends INewUser {
     id: number;
+}
+
+interface IUserWithPassword extends IUser {
+    password: string;
 }
 
 interface INewPost {
@@ -34,7 +37,17 @@ interface IPostStatus extends INewPostStatus {
     id: number;
 }
 
-const users: IUser[] = [
+interface INewComment {
+    userId: number;
+    postId: number;
+    content: string;
+}
+
+interface IComment extends INewComment {
+    id: number;
+}
+
+const users: IUserWithPassword[] = [
     {
         id: 1,
         firstName: 'Juhan',
@@ -76,6 +89,27 @@ const postStatuses: IPostStatus[] = [
     },
 ];
 
+const comments: IComment[] = [
+    {
+        id: 1,
+        userId: 1,
+        postId: 1,
+        content: 'Esimese postituse esimene kommentaar', 
+    },
+    {
+        id: 2,
+        userId: 1,
+        postId: 2,
+        content: 'Teise postituse esimene kommentaar', 
+    },
+    {
+        id: 3,
+        userId: 1,
+        postId: 2,
+        content: 'Teise postituse teine kommentaar', 
+    },
+]
+
 // Endpoint API töötamise kontrollimisek
 app.get('/api/v1/health', (req: Request, res: Response) => {
     res.status(200).json({
@@ -83,36 +117,44 @@ app.get('/api/v1/health', (req: Request, res: Response) => {
     });
 });
 
+/*
+--------------------------------------------------
+Kasutajatega seotud endpoindid
+--------------------------------------------------
+*/
+
+
 // Kõikide kasutajate pärimise endpoint
 app.get('/api/v1/users', (req: Request, res: Response) => {
+    const usersWithoutPassword = users.map(user => {
+        const userWithoutPassword = getUserWithoutPassword(user);
+        return userWithoutPassword;
+    });
     res.status(200).json({
         success: true,
         message: 'List of users',
-        users
+        users: usersWithoutPassword,
     });
 });
 
 // Kasutaja pärimine id alusel
 app.get('/api/v1/users/:id', (req: Request, res: Response) => {
     const id = parseInt(req.params.id);
-    const user = users.find(element => {
-        return element.id === id;
-    });
+    let user: IUserWithPassword | undefined = findUserById(id);
     if (!user) {
         return res.status(404).json({
             success: false,
             message: `User not found`,
         });
     }
+    const userWithoutPassword = getUserWithoutPassword(user);
+
     return res.status(200).json({
         success: true,
         message: `User`,
         data: {
-            id: user.id,
-            firstName: user.firstName,
-            lastName: user.lastName,
-            email: user.email,
-        }
+            user: userWithoutPassword
+        },
     });
 });
 
@@ -120,9 +162,7 @@ app.get('/api/v1/users/:id', (req: Request, res: Response) => {
 app.patch('/api/v1/users/:id', (req: Request, res: Response) => {
     const id = parseInt(req.params.id);
     const { firstName, lastName, email, password } = req.body;
-    const user = users.find(element => {
-        return element.id === id;
-    });
+    const user: IUserWithPassword | undefined = findUserById(id);
     if (!user) {
         return res.status(404).json({
             success: false,
@@ -157,7 +197,7 @@ app.post('/api/v1/users', (req: Request, res: Response) => {
         });
     }
     const id = users.length + 1;
-    const newUser: IUser = {
+    const newUser: IUserWithPassword = {
         id,
         firstName,
         lastName,
@@ -186,6 +226,82 @@ app.delete('/api/v1/users/:id', (req: Request, res: Response) => {
     return res.status(200).json({
         success: true,
         message: `User deleted`,
+    });
+});
+
+/*
+--------------------------------------------------
+Postituste staatustega seotud endpoindid
+--------------------------------------------------
+*/
+
+// Kõikide postituste staatuste pärimise endpoint
+app.get('/api/v1/posts/statuses', (req: Request, res: Response) => {
+    res.status(200).json({
+        success: true,
+        message: 'List of post statuses',
+        postStatuses,
+    });
+});
+
+// Postituse staatus pärimine staatuse id alusel
+app.get('/api/v1/posts/statuses/:id', (req: Request, res: Response) => {
+    const id = parseInt(req.params.id);
+    const postStatus = postStatuses.find(element => {
+        return element.id === id;
+    });
+    if (!postStatus) {
+        return res.status(404).json({
+            success: false,
+            message: `Post status not found`,
+        });
+    }
+    return res.status(200).json({
+        success: true,
+        message: `Post status`,
+        data: {
+            postStatus,
+        },
+    });
+});
+
+/*
+--------------------------------------------------
+Postitustega seotud endpoindid
+--------------------------------------------------
+*/
+
+// Kõikide postituste pärimise endpoint
+app.get('/api/v1/posts', (req: Request, res: Response) => {
+    const postsWithStatusesAndUsers = posts.map(post => {
+        const postWithStatusAndUser = getPostWithStatusAndUser(post);
+        return postWithStatusAndUser;
+    });
+    res.status(200).json({
+        success: true,
+        message: 'List of posts',
+        posts: postsWithStatusesAndUsers,
+    });
+});
+
+// Postituse pärimine id alusel
+app.get('/api/v1/posts/:id', (req: Request, res: Response) => {
+    const id = parseInt(req.params.id);
+    const post = findPostById(id);
+    if (!post) {
+        return res.status(404).json({
+            success: false,
+            message: `Post not found`,
+        });
+    };
+
+    const postWithStatusAndUser = getPostWithStatusAndUser(post);
+    return res.status(200).json({
+        success: true,
+        message: `Post`,
+        data: {
+            post: postWithStatusAndUser,
+        },
     });
 });
 
@@ -261,94 +377,193 @@ app.delete('/api/v1/posts/:id', (req: Request, res: Response) => {
     });
 });
 
-// Kõikide postituste staatuste pärimise endpoint
-app.get('/api/v1/posts/statuses', (req: Request, res: Response) => {
+/*
+--------------------------------------------------
+Kommentaaridega seotud endpoindid
+--------------------------------------------------
+*/
+
+// Kõikide kommentaaride pärimise endpoint
+app.get('/api/v1/comments', (req: Request, res: Response) => {
+    const commentsWithUsers = comments.map(comment => {
+        let user: IUserWithPassword | undefined = findUserById(comment.id);
+        if (!user) user = unknownUser();
+        const userWithoutPassword = getUserWithoutPassword(user);
+        const commentWithUser = {
+            id: comment.id,
+            content: comment.content,
+            user: userWithoutPassword,
+        };
+        return commentWithUser;
+    });
+
     res.status(200).json({
         success: true,
-        message: 'List of post statuses',
-        postStatuses,
+        message: 'List of all comments',
+        comments: commentsWithUsers,
     });
 });
 
-// Postituse staatus pärimine staatuse id alusel
-app.get('/api/v1/posts/statuses/:id', (req: Request, res: Response) => {
+// Kommentaari pärimine id alusel
+app.get('/api/v1/comments/:id', (req: Request, res: Response) => {
     const id = parseInt(req.params.id);
-    const postStatus = postStatuses.find(element => {
-        return element.id === id;
-    });
-    if (!postStatus) {
+    const comment = getCommentById(id);
+    if (!comment) {
         return res.status(404).json({
             success: false,
-            message: `Post status not found`,
+            message: `Comment not found`,
         });
     }
     return res.status(200).json({
         success: true,
-        message: `Post status`,
+        message: `Comment`,
         data: {
-            postStatus,
+            comment,
         },
     });
 });
 
-// Kõikide postituste pärimise endpoint
-app.get('/api/v1/posts', (req: Request, res: Response) => {
-    res.status(200).json({
+// Postitusega seotud kommentaaride pärimise endpoint
+app.get('/api/v1/posts/:id/comments', (req: Request, res: Response) => {
+    const id = parseInt(req.params.id);
+    const comments = findCommentsByPostId(id);
+    return res.status(200).json({
         success: true,
-        message: 'List of posts',
-        posts
+        message: `Comments of post with id: ${id}`,
+        data: {
+            comments,
+        },
     });
 });
 
-// Postituse pärimine id alusel
-app.get('/api/v1/posts/:id', (req: Request, res: Response) => {
-    const id = parseInt(req.params.id);
-    const post = posts.find(element => {
-        return element.id === id;
+// Kommentaari loomine
+app.post('/api/v1/comments', (req: Request, res: Response) => {
+    const { postId, content } = req.body;
+    let { userId } = req.body;
+    if (!postId || !content) {
+        return res.status(400).json({
+            success: false,
+            message: `Some data is missing (postId, content)`,
+        });
+    }
+    if (!userId) userId = null;
+    const id = comments.length + 1;
+    const comment: IComment = {
+        id,
+        userId,
+        postId,
+        content,
+    };
+    comments.push(comment);
+
+    return res.status(201).json({
+        success: true,
+        message: `comment with id ${comment.id} created`,
     });
-    if (!post) {
+});
+
+// Kommentaari kustutamine
+app.delete('/api/v1/comments/:id', (req: Request, res: Response) => {
+    const id = parseInt(req.params.id);
+    const index = comments.findIndex(element => element.id === id);
+    if (index === -1) {
         return res.status(404).json({
             success: false,
-            message: `Post not found`,
+            message: `Comment not found`,
         });
+    }
+    comments.splice(index, 1);
+    return res.status(200).json({
+        success: true,
+        message: `Comment deleted`,
+    });
+});
+
+
+/*
+--------------------------------------------------
+Kasutajatega seotud funktsioonid
+--------------------------------------------------
+*/
+
+const findUserById = (id: number): IUserWithPassword | undefined => {
+    let user: IUserWithPassword | undefined = users.find(element => element.id === id);
+    return user;
+};
+
+const getUserWithoutPassword = (user: IUserWithPassword): IUser => {
+    return {
+        id: user.id,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        email: user.email,
     };
-    let postStatus: IPostStatus | undefined = postStatuses.find(element => element.id === post.statusId);
-    if(!postStatus) {
-        postStatus = {
-            id: 0,
-            status: 'Unknown',
-        };
-    };
-    
-    let user: IUser | undefined = users.find(elemenet => elemenet.id === post.userId);
-    if (!user) {
-        user = {
+};
+
+const unknownUser = (): IUserWithPassword => {
+    return {
             id: 0,
             firstName: 'Jane',
             lastName: 'Doe',
             email: 'jane@doe.com',
             password: 'jane',
         };
-    };
+};
+
+/*
+--------------------------------------------------
+Postitustega seotud funktsioonid
+--------------------------------------------------
+*/
+
+const findPostById = (id: number): IPost | undefined => {
+    const post = posts.find(element => {
+        return element.id === id;
+    });
+    return post;
+};
+
+const getPostWithStatusAndUser = (post: IPost) => {
+    const postStatus = getPostStatusById(post.statusId);
+    let user: IUserWithPassword | undefined = findUserById(post.userId);
+    if (!user) user = unknownUser();
+    const userWithoutPassword = getUserWithoutPassword(user);
+
     const postWithStatusAndUser = {
         id: post.id,
         title: post.title,
-        user: {
-            id: user.id,
-            firstName: user.firstName,
-            lastName: user.lastName,
-            email: user.email,
-        },
+        user: userWithoutPassword,
         status: postStatus,
     };
-    return res.status(200).json({
-        success: true,
-        message: `Post`,
-        data: {
-            post: postWithStatusAndUser,
-        },
+    return postWithStatusAndUser;
+};
+
+const getPostStatusById = (id: number): IPostStatus | undefined => {
+    let postStatus: IPostStatus | undefined = postStatuses.find(element => element.id === id);
+    if(!postStatus) {
+        postStatus = {
+            id: 0,
+            status: 'Unknown',
+        };
+    };
+    return postStatus;
+}
+/*
+--------------------------------------------------
+Kommentaaridega seotud funktsioonid
+--------------------------------------------------
+*/
+const getCommentById = (id: number): IComment | undefined => {
+    const comment = comments.find(element => {
+        return element.id === id;
     });
-});
+    return comment;
+};
+
+const findCommentsByPostId = (id: number): IComment[] => {
+    const postComments = comments.filter(comment => comment.postId === id);
+    return postComments;
+}
 
 app.listen(PORT, () => {
     console.log('Server is running');
