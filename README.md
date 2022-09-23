@@ -44,7 +44,6 @@ npm start
 - [NodeJS v16](https://nodejs.org/en/download/)
 - [TypeScript](https://www.typescriptlang.org/)
 - [Express](https://www.npmjs.com/package/express)
-- 
 
 ## Kasutatavad tööriistad
 - [MS Visual Studio Code](https://code.visualstudio.com/download) koodi kirjutamiseks
