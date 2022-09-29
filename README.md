@@ -28,6 +28,10 @@ Repositoorium on mõeldud toetamaks üliõpilast kursuse jooksul oma API arendam
    - service
    - middleware
    - segadus Interfacedega (eeltöö on oluline!!!)
+   - middleware registreerimine
+     - `app.use(middleware)`
+     - `route`-s
+     - registreerimise järjekord!
 
 ## Kuidas paigaldada?
 1. Klooni repositoorium
