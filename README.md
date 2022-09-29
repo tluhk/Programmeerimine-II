@@ -21,6 +21,12 @@ Repositoorium on mõeldud toetamaks üliõpilast kursuse jooksul oma API arendam
   - [objekti destruktureerimine](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Destructuring_assignment)
   - [template literal](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Template_literals)
 
+### Teine loeng 29.09.2022
+ - Märksõnad
+   - API struktureerimine
+   - controller
+   - service
+   - middleware
 
 ## Kuidas paigaldada?
 1. Klooni repositoorium
