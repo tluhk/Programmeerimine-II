@@ -27,6 +27,7 @@ Repositoorium on mõeldud toetamaks üliõpilast kursuse jooksul oma API arendam
    - controller
    - service
    - middleware
+   - segadus Interfacedega (eeltöö on oluline!!!)
 
 ## Kuidas paigaldada?
 1. Klooni repositoorium
