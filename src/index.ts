@@ -1,4 +1,4 @@
-import express, { Request, Response } from 'express';
+import express, { Request, Response, NextFunction } from 'express';
 import { INewUser, IUser } from './components/users/interfaces';
 import { IPost, INewPost } from './components/posts/interfaces';
 import { IComment, INewComment } from './components/comments/interfaces';
@@ -6,14 +6,22 @@ import { IPostStatus, INewPostStatus } from './components/postsStatuses/interfac
 import { users, postStatuses, posts, comments } from './mockData';
 import usersServices from './components/users/services';
 import usersControllers from './components/users/controllers';
+import usersMiddlewares from './components/users/middlewares';
 
 const app = express();
 const PORT = 3000;
 
 app.use(express.json());
 
+const logger = (req: Request, res: Response, next: NextFunction) => {
+    console.log(`${req.method} ${req.url} ${new Date().toISOString()}`);
+    next();
+};
+
+app.use(logger);
+
 // Endpoint API töötamise kontrollimiseks
-app.get('/api/v1/health', (req: Request, res: Response) => {
+app.get('/api/v1/health', logger, (req: Request, res: Response) => {
     res.status(200).json({
         message: 'Hello world!',
     });
@@ -32,8 +40,10 @@ app.get('/api/v1/users', usersControllers.getAllUsers);
 // Kasutaja pärimine id alusel
 app.get('/api/v1/users/:id', usersControllers.getUserById);
 
+
+
 // Kasutaja loomine
-app.post('/api/v1/users', usersControllers.createUser);
+app.post('/api/v1/users', usersMiddlewares.checkCreateUserData, usersControllers.createUser);
 
 // Kasutaja muutmine
 app.patch('/api/v1/users/:id', (req: Request, res: Response) => {
