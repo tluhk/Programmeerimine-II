@@ -40,6 +40,22 @@ const usersServices = {
         };
         users.push(newUser);
         return id;
+    },
+    updateUser: (userToUpdate: IUser ): Boolean => {
+        const { id, firstName, lastName, email, password } = userToUpdate;
+        const user = usersServices.findUserById(id);
+        if (user && firstName) user.firstName = firstName;
+        if (user && lastName) user.lastName = lastName;
+        if (user && email) user.email = email;
+        if (user && password) user.password = password;
+
+        return true;
+    },
+    deleteUser: (id: number): Boolean => {
+        const index = users.findIndex(element => element.id === id);
+        if(index === -1) return false;
+        users.splice(index, 1);
+        return true;
     }
 };
 
