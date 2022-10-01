@@ -32,71 +32,22 @@ app.get('/api/v1/health', logger, (req: Request, res: Response) => {
 Kasutajatega seotud endpoindid
 --------------------------------------------------
 */
-
-
 // Kõikide kasutajate pärimise endpoint
 app.get('/api/v1/users', usersControllers.getAllUsers);
-
 // Kasutaja pärimine id alusel
 app.get('/api/v1/users/:id', usersControllers.getUserById);
-
-
-
 // Kasutaja loomine
 app.post('/api/v1/users', usersMiddlewares.checkCreateUserData, usersControllers.createUser);
-
 // Kasutaja muutmine
-app.patch('/api/v1/users/:id', (req: Request, res: Response) => {
-    const id = parseInt(req.params.id);
-    const { firstName, lastName, email, password } = req.body;
-    const user: IUser | undefined = usersServices.findUserById(id);
-    if (!user) {
-        return res.status(404).json({
-            success: false,
-            message: `User not found`,
-        });
-    }
-    if (!firstName && !lastName && !email && !password) {
-        return res.status(400).json({
-            success: false,
-            message: `Nothing to change`,
-        });
-    }
-
-    if (firstName) user.firstName = firstName;
-    if (lastName) user.lastName = lastName;
-    if (email) user.email = email;
-    if (password) user.password = password;
-
-    return res.status(200).json({
-        success: true,
-        message: `User updated`,
-    });
-});
-
+app.patch('/api/v1/users/:id', usersControllers.updateUser);
 // Kasutaja kustutamine
-app.delete('/api/v1/users/:id', (req: Request, res: Response) => {
-    const id = parseInt(req.params.id);
-    const index = users.findIndex(element => element.id === id);
-    if (index === -1) {
-        return res.status(404).json({
-            success: false,
-            message: `User not found`,
-        });
-    }
-    users.splice(index, 1);
-    return res.status(200).json({
-        success: true,
-        message: `User deleted`,
-    });
-});
+app.delete('/api/v1/users/:id', usersControllers.deleteUser);
 
 /*
 --------------------------------------------------
 Postituste staatustega seotud endpoindid
 --------------------------------------------------
 */
-
 // Kõikide postituste staatuste pärimise endpoint
 app.get('/api/v1/posts/statuses', (req: Request, res: Response) => {
     res.status(200).json({
