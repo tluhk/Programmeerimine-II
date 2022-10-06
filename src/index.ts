@@ -1,12 +1,11 @@
 import express, { Request, Response, NextFunction } from 'express';
-import { INewUser, IUser } from './components/users/interfaces';
-import { IPost, INewPost } from './components/posts/interfaces';
-import { IComment, INewComment } from './components/comments/interfaces';
-import { IPostStatus, INewPostStatus } from './components/postsStatuses/interfaces';
-import { users, postStatuses, posts, comments } from './mockData';
+import { IUser } from './components/users/interfaces';
+import { IComment } from './components/comments/interfaces';
+import { postStatuses, comments } from './mockData';
 import usersServices from './components/users/services';
 import usersControllers from './components/users/controllers';
 import usersMiddlewares from './components/users/middlewares';
+import postsController from './components/posts/controllers';
 
 const app = express();
 const PORT = 3000;
@@ -85,110 +84,19 @@ Postitustega seotud endpoindid
 */
 
 // Kõikide postituste pärimise endpoint
-app.get('/api/v1/posts', (req: Request, res: Response) => {
-    const postsWithStatusesAndUsers = posts.map(post => {
-        const postWithStatusAndUser = getPostWithStatusAndUser(post);
-        return postWithStatusAndUser;
-    });
-    res.status(200).json({
-        success: true,
-        message: 'List of posts',
-        posts: postsWithStatusesAndUsers,
-    });
-});
+app.get('/api/v1/posts', postsController.getAllPosts);
 
 // Postituse pärimine id alusel
-app.get('/api/v1/posts/:id', (req: Request, res: Response) => {
-    const id = parseInt(req.params.id);
-    const post = findPostById(id);
-    if (!post) {
-        return res.status(404).json({
-            success: false,
-            message: `Post not found`,
-        });
-    };
-
-    const postWithStatusAndUser = getPostWithStatusAndUser(post);
-    return res.status(200).json({
-        success: true,
-        message: `Post`,
-        data: {
-            post: postWithStatusAndUser,
-        },
-    });
-});
+app.get('/api/v1/posts/:id', postsController.getPostById);
 
 // Postituse loomine
-app.post('/api/v1/posts', (req: Request, res: Response) => {
-    const { title, content, userId, statusId } = req.body;
-    if (!title || !content || !userId || !statusId) {
-        return res.status(400).json({
-            success: false,
-            message: `Some data is missing (title, content, userId, statusId)`,
-        });
-    }
-    const id = posts.length + 1;
-    const newPost: IPost = {
-        id,
-        title,
-        content,
-        userId,
-        statusId,
-    };
-    posts.push(newPost);
-
-    return res.status(201).json({
-        success: true,
-        message: `Post with id ${newPost.id} created`,
-    });
-});
+app.post('/api/v1/posts', postsController.createPost);
 
 // Postituse muutmine
-app.patch('/api/v1/posts/:id', (req: Request, res: Response) => {
-    const id = parseInt(req.params.id);
-    const { title, content, statusId } = req.body;
-    const post = posts.find(element => {
-        return element.id === id;
-    });
-    if (!post) {
-        return res.status(404).json({
-            success: false,
-            message: `Post not found`,
-        });
-    }
-    if (!title && !content && !statusId) {
-        return res.status(400).json({
-            success: false,
-            message: `Nothing to change`,
-        });
-    }
-
-    if (title) post.title = title;
-    if (content) post.content = content;
-    if (statusId) post.statusId = statusId;
-
-    return res.status(200).json({
-        success: true,
-        message: `Post updated`,
-    });
-});
+app.patch('/api/v1/posts/:id', postsController.updatePost);
 
 // Postituse kustutamine
-app.delete('/api/v1/posts/:id', (req: Request, res: Response) => {
-    const id = parseInt(req.params.id);
-    const index = posts.findIndex(element => element.id === id);
-    if (index === -1) {
-        return res.status(404).json({
-            success: false,
-            message: `Post not found`,
-        });
-    }
-    posts.splice(index, 1);
-    return res.status(200).json({
-        success: true,
-        message: `Post deleted`,
-    });
-});
+app.delete('/api/v1/posts/:id', postsController.deletePost);
 
 /*
 --------------------------------------------------
@@ -292,44 +200,6 @@ app.delete('/api/v1/comments/:id', (req: Request, res: Response) => {
     });
 });
 
-/*
---------------------------------------------------
-Postitustega seotud funktsioonid
---------------------------------------------------
-*/
-
-const findPostById = (id: number): IPost | undefined => {
-    const post = posts.find(element => {
-        return element.id === id;
-    });
-    return post;
-};
-
-const getPostWithStatusAndUser = (post: IPost) => {
-    const postStatus = getPostStatusById(post.statusId);
-    let user: IUser | undefined = usersServices.findUserById(post.userId);
-    if (!user) user = usersServices.unknownUser();
-    const userWithoutPassword = usersServices.getUserWithoutPassword(user);
-
-    const postWithStatusAndUser = {
-        id: post.id,
-        title: post.title,
-        user: userWithoutPassword,
-        status: postStatus,
-    };
-    return postWithStatusAndUser;
-};
-
-const getPostStatusById = (id: number): IPostStatus | undefined => {
-    let postStatus: IPostStatus | undefined = postStatuses.find(element => element.id === id);
-    if(!postStatus) {
-        postStatus = {
-            id: 0,
-            status: 'Unknown',
-        };
-    };
-    return postStatus;
-}
 /*
 --------------------------------------------------
 Kommentaaridega seotud funktsioonid

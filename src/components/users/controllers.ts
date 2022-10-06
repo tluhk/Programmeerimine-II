@@ -84,6 +84,7 @@ const usersControllers = {
                 message: `User not found`,
             });
         }
+        
         return res.status(200).json({
             success: true,
             message: `User deleted`,
