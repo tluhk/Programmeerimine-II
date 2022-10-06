@@ -28,6 +28,7 @@ const usersServices = {
             const userWithoutPassword = usersServices.getUserWithoutPassword(user);
             return userWithoutPassword;
         });
+        return usersWithoutPassword;
     },
     createUser: (user: INewUser): number => {
         const id = users.length + 1;
