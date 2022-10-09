@@ -7,6 +7,7 @@ import usersControllers from './components/users/controllers';
 import usersMiddlewares from './components/users/middlewares';
 import postsController from './components/posts/controllers';
 import postStatusesController from './components/postsStatuses/controllers';
+import commentsController from './components/comments/controllers';
 
 const app = express();
 const PORT = 3000;
@@ -50,7 +51,6 @@ Postituste staatustega seotud endpoindid
 */
 // Kõikide postituste staatuste pärimise endpoint
 app.get('/api/v1/posts/statuses', postStatusesController.getAllPostStatuses);
-
 // Postituse staatus pärimine staatuse id alusel
 app.get('/api/v1/posts/statuses/:id', postStatusesController.getPostStatusById);
 
@@ -59,19 +59,14 @@ app.get('/api/v1/posts/statuses/:id', postStatusesController.getPostStatusById);
 Postitustega seotud endpoindid
 --------------------------------------------------
 */
-
 // Kõikide postituste pärimise endpoint
 app.get('/api/v1/posts', postsController.getAllPosts);
-
 // Postituse pärimine id alusel
 app.get('/api/v1/posts/:id', postsController.getPostById);
-
 // Postituse loomine
 app.post('/api/v1/posts', postsController.createPost);
-
 // Postituse muutmine
 app.patch('/api/v1/posts/:id', postsController.updatePost);
-
 // Postituse kustutamine
 app.delete('/api/v1/posts/:id', postsController.deletePost);
 
@@ -80,119 +75,16 @@ app.delete('/api/v1/posts/:id', postsController.deletePost);
 Kommentaaridega seotud endpoindid
 --------------------------------------------------
 */
-
 // Kõikide kommentaaride pärimise endpoint
-app.get('/api/v1/comments', (req: Request, res: Response) => {
-    const commentsWithUsers = comments.map(comment => {
-        let user: IUser | undefined = usersServices.findUserById(comment.id);
-        if (!user) user = usersServices.unknownUser();
-        const userWithoutPassword = usersServices.getUserWithoutPassword(user);
-        const commentWithUser = {
-            id: comment.id,
-            content: comment.content,
-            user: userWithoutPassword,
-        };
-        return commentWithUser;
-    });
-
-    res.status(200).json({
-        success: true,
-        message: 'List of all comments',
-        comments: commentsWithUsers,
-    });
-});
-
+app.get('/api/v1/comments', commentsController.getAllComments);
 // Kommentaari pärimine id alusel
-app.get('/api/v1/comments/:id', (req: Request, res: Response) => {
-    const id = parseInt(req.params.id);
-    const comment = getCommentById(id);
-    if (!comment) {
-        return res.status(404).json({
-            success: false,
-            message: `Comment not found`,
-        });
-    }
-    return res.status(200).json({
-        success: true,
-        message: `Comment`,
-        data: {
-            comment,
-        },
-    });
-});
-
+app.get('/api/v1/comments/:id', commentsController.getCommentById);
 // Postitusega seotud kommentaaride pärimise endpoint
-app.get('/api/v1/posts/:id/comments', (req: Request, res: Response) => {
-    const id = parseInt(req.params.id);
-    const comments = findCommentsByPostId(id);
-    return res.status(200).json({
-        success: true,
-        message: `Comments of post with id: ${id}`,
-        data: {
-            comments,
-        },
-    });
-});
-
+app.get('/api/v1/posts/:id/comments', commentsController.getPostComment);
 // Kommentaari loomine
-app.post('/api/v1/comments', (req: Request, res: Response) => {
-    const { postId, content } = req.body;
-    let { userId } = req.body;
-    if (!postId || !content) {
-        return res.status(400).json({
-            success: false,
-            message: `Some data is missing (postId, content)`,
-        });
-    }
-    if (!userId) userId = null;
-    const id = comments.length + 1;
-    const comment: IComment = {
-        id,
-        userId,
-        postId,
-        content,
-    };
-    comments.push(comment);
-
-    return res.status(201).json({
-        success: true,
-        message: `comment with id ${comment.id} created`,
-    });
-});
-
+app.post('/api/v1/comments', commentsController.createComment);
 // Kommentaari kustutamine
-app.delete('/api/v1/comments/:id', (req: Request, res: Response) => {
-    const id = parseInt(req.params.id);
-    const index = comments.findIndex(element => element.id === id);
-    if (index === -1) {
-        return res.status(404).json({
-            success: false,
-            message: `Comment not found`,
-        });
-    }
-    comments.splice(index, 1);
-    return res.status(200).json({
-        success: true,
-        message: `Comment deleted`,
-    });
-});
-
-/*
---------------------------------------------------
-Kommentaaridega seotud funktsioonid
---------------------------------------------------
-*/
-const getCommentById = (id: number): IComment | undefined => {
-    const comment = comments.find(element => {
-        return element.id === id;
-    });
-    return comment;
-};
-
-const findCommentsByPostId = (id: number): IComment[] => {
-    const postComments = comments.filter(comment => comment.postId === id);
-    return postComments;
-}
+app.delete('/api/v1/comments/:id', commentsController.deleteComment);
 
 app.listen(PORT, () => {
     console.log('Server is running');
