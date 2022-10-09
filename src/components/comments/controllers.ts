@@ -29,17 +29,6 @@ const commentsController = {
             },
         });
     },
-    getPostComment: (req: Request, res: Response) => {
-        const id = parseInt(req.params.id);
-        const comments = commentsService.findCommentsByPostId(id);
-        return res.status(200).json({
-            success: true,
-            message: `Comments of post with id: ${id}`,
-            data: {
-                comments,
-            },
-        });
-    },
     createComment: (req: Request, res: Response) => {
         const { postId, content } = req.body;
         let { userId } = req.body;

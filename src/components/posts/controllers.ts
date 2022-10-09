@@ -1,4 +1,5 @@
 import { Request, Response } from "express";
+import commentsService from "../comments/services";
 import { INewPost, IPostToUpdate } from "./interfaces";
 import postsService from "./services";
 
@@ -27,6 +28,17 @@ const postsController = {
             message: `Post`,
             data: {
                 post: postWithStatusAndUser,
+            },
+        });
+    },
+    getPostComment: (req: Request, res: Response) => {
+        const id = parseInt(req.params.id);
+        const comments = commentsService.findCommentsByPostId(id);
+        return res.status(200).json({
+            success: true,
+            message: `Comments of post with id: ${id}`,
+            data: {
+                comments,
             },
         });
     },
