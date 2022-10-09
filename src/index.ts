@@ -6,6 +6,7 @@ import usersServices from './components/users/services';
 import usersControllers from './components/users/controllers';
 import usersMiddlewares from './components/users/middlewares';
 import postsController from './components/posts/controllers';
+import postStatusesController from './components/postsStatuses/controllers';
 
 const app = express();
 const PORT = 3000;
@@ -48,34 +49,10 @@ Postituste staatustega seotud endpoindid
 --------------------------------------------------
 */
 // Kõikide postituste staatuste pärimise endpoint
-app.get('/api/v1/posts/statuses', (req: Request, res: Response) => {
-    res.status(200).json({
-        success: true,
-        message: 'List of post statuses',
-        postStatuses,
-    });
-});
+app.get('/api/v1/posts/statuses', postStatusesController.getAllPostStatuses);
 
 // Postituse staatus pärimine staatuse id alusel
-app.get('/api/v1/posts/statuses/:id', (req: Request, res: Response) => {
-    const id = parseInt(req.params.id);
-    const postStatus = postStatuses.find(element => {
-        return element.id === id;
-    });
-    if (!postStatus) {
-        return res.status(404).json({
-            success: false,
-            message: `Post status not found`,
-        });
-    }
-    return res.status(200).json({
-        success: true,
-        message: `Post status`,
-        data: {
-            postStatus,
-        },
-    });
-});
+app.get('/api/v1/posts/statuses/:id', postStatusesController.getPostStatusById);
 
 /*
 --------------------------------------------------
