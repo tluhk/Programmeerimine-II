@@ -49,7 +49,6 @@ const usersServices = {
         if (user && lastName) user.lastName = lastName;
         if (user && email) user.email = email;
         if (user && password) user.password = password;
-
         return true;
     },
     deleteUser: (id: number): Boolean => {
