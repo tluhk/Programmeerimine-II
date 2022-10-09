@@ -1,32 +1,21 @@
-import express, { Request, Response, NextFunction } from 'express';
-import { IUser } from './components/users/interfaces';
-import { IComment } from './components/comments/interfaces';
-import { postStatuses, comments } from './mockData';
-import usersServices from './components/users/services';
+import express from 'express';
 import usersControllers from './components/users/controllers';
 import usersMiddlewares from './components/users/middlewares';
 import postsController from './components/posts/controllers';
 import postStatusesController from './components/postsStatuses/controllers';
 import commentsController from './components/comments/controllers';
+import generalController from './components/general/controllers';
+import logger from './components/general/middlewares';
 
 const app = express();
 const PORT = 3000;
 
 app.use(express.json());
 
-const logger = (req: Request, res: Response, next: NextFunction) => {
-    console.log(`${req.method} ${req.url} ${new Date().toISOString()}`);
-    next();
-};
-
 app.use(logger);
 
 // Endpoint API töötamise kontrollimiseks
-app.get('/api/v1/health', logger, (req: Request, res: Response) => {
-    res.status(200).json({
-        message: 'Hello world!',
-    });
-});
+app.get('/api/v1/health', generalController.health);
 
 /*
 --------------------------------------------------
