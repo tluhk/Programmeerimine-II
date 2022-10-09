@@ -64,6 +64,9 @@ npm start
 ## API dokumentatsioon
 ### Endpoindid
 
+### API töötamise kontrollimiseks
+- `GET /api/v1/health/`
+
 ### Kasutajatega seotud
 - [Kasutajate pärimine](./apidocs/users/get.md#list-of-users): `GET /api/v1/users/`
 - [Kasutaja pärimine id alusel](./apidocs/users/get.md#user-by-id): `GET /api/v1/users/:id/`
