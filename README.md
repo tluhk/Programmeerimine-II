@@ -9,24 +9,9 @@ Repositoorium on mõeldud toetamaks üliõpilast kursuse jooksul oma API arendam
 ## Loengud
 - [Esimene loeng 15.09.2022](apidocs/lectures/first.md)
 - [Teine loeng 29.09.2022](apidocs/lectures/second.md)
-
-## Kuidas paigaldada?
-1. Klooni repositoorium
-```bash
-git clone https://github.com/tluhk/Programmeerimine-II.git
-```
-2. Liigu projekti kausta
-```bash
-cd Programmeerimine-II
-```
-3. Paigalda NPM paketid
-```bash
-npm install
-```
-4. Käivita projekt
-```bash
-npm start
-```
+- [Kolmas loeng 13.10.2022](apidocs/lectures/third.md)
+- [Neljas loeng 27.10.2022](apidocs/lectures/fourth.md)
+- [Viies loeng 11.11.2022](apidocs/lectures/fifth.md)
 
 ## Kasutatavad tehnoloogiad
 - [NodeJS v16](https://nodejs.org/en/download/)
@@ -39,32 +24,5 @@ npm start
  - [Thunder Client API tööriist](https://www.thunderclient.com/) jooskvalt API endpointidele päringute tegemiseks ja testimiseks
 
 ## API dokumentatsioon
-### Endpoindid
-
-### API töötamise kontrollimiseks
-- `GET /api/v1/health/`
-
-### Kasutajatega seotud
-- [Kasutajate pärimine](./apidocs/users/get.md#list-of-users): `GET /api/v1/users/`
-- [Kasutaja pärimine id alusel](./apidocs/users/get.md#user-by-id): `GET /api/v1/users/:id/`
-- Kasutaja loomine: `POST /api/v1/users/`
-- Kasutaja muutmine: `PATCH /api/v1/users/:id/`
-- Kasutaja kustutamine: `GET /api/v1/users/:id/`
-
-### Postitustega seotud
-- Postituste pärimine: `GET /api/v1/posts/`
-- Postituse pärimine id alusel: `GET /api/v1/posts/:id/`
-- Postituse loomine: `POST /api/v1/posts/`
-- Postituse muutmine: `PATCH /api/v1/posts/:id/`
-- Postituse kustutamine: `GET /api/v1/posts/:id/`
-- Postitusega seotud kommentaaride pärimine postituse id alusel: `GET /api/v1/posts/:id/comments/`
-
-## Postituse staatusega seotud
-- Postituse staatuste pärimine: `GET /api/v1/posts/statuses/`
-- Postituse staatuse pärimine id alusel: `GET /api/v1/posts/statuses/:id/`
-
-### Kommentaaridega seotud
-- Kommentaaride pärimine: `GET /api/v1/comments/`
-- Kommentaari pärimine id alusel: `GET /api/v1/comments/:id/`
-- Kommentaari loomine: `POST /api/v1/comments/`
-- Kommentaari kustutamine: `GET /api/v1/comments/:id/`
+[Paigaldus](apidocs/install.md)
+[API endoindid](apidocs/README.md)
