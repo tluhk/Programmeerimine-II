@@ -7,31 +7,8 @@ Tegemist on repositooriumiga, mis sisaldab Tallinna Ülikooli Haapsalu kolledži
 Repositoorium on mõeldud toetamaks üliõpilast kursuse jooksul oma API arendamisel paralleelselt sarnast API-t loengute jooksul tehes.
 
 ## Loengud
-### Esimene loeng 15.09.2022
-- Märksõnad
-  - API
-  - [NodeJS](https://nodejs.org/en/)
-  - [NPM](https://www.npmjs.com/)
-  - [TypeScript](https://www.typescriptlang.org/)
-  - [ts-node](https://www.npmjs.com/package/ts-node)
-  - [nodemon](https://nodemon.io/)
-  - [Issue linkimine branchiga](https://docs.github.com/en/issues/tracking-your-work-with-issues/creating-a-branch-for-an-issue)
-  - [callback funktsioon](https://developer.mozilla.org/en-US/docs/Glossary/Callback_function)
-  - endpoint
-  - [objekti destruktureerimine](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Destructuring_assignment)
-  - [template literal](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Template_literals)
-
-### Teine loeng 29.09.2022
- - Märksõnad
-   - API struktureerimine
-   - controller
-   - service
-   - middleware
-   - segadus Interfacedega (eeltöö on oluline!!!)
-   - middleware registreerimine
-     - `app.use(middleware)`
-     - `route`-s
-     - registreerimise järjekord!
+- [Esimene loeng 15.09.2022](apidocs/lectures/first.md)
+- [Teine loeng 29.09.2022](apidocs/lectures/second.md)
 
 ## Kuidas paigaldada?
 1. Klooni repositoorium
