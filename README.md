@@ -24,5 +24,5 @@ Repositoorium on mõeldud toetamaks üliõpilast kursuse jooksul oma API arendam
  - [Thunder Client API tööriist](https://www.thunderclient.com/) jooskvalt API endpointidele päringute tegemiseks ja testimiseks
 
 ## API dokumentatsioon
-[Paigaldus](apidocs/install.md)
-[API endoindid](apidocs/README.md)
+- [Paigaldus](apidocs/install.md)
+- [API endoindid](apidocs/README.md)
