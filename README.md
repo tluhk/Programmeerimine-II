@@ -25,4 +25,4 @@ Repositoorium on mõeldud toetamaks üliõpilast kursuse jooksul oma API arendam
 
 ## API dokumentatsioon
 - [Paigaldus](apidocs/install.md)
-- [API endoindid](apidocs/README.md)
+- [API endpoindid](apidocs/README.md)

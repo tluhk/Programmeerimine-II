@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { INewUser, IUser } from "./interfaces";
+import { INewUser, IUser, IUserWithoutRole } from "./interfaces";
 import usersServices from "./services";
 
 const usersControllers = {
@@ -29,15 +29,16 @@ const usersControllers = {
             },
         });
     },
-    createUser: (req: Request, res: Response) => {
+    createUser: async (req: Request, res: Response) => {
         const { firstName, lastName, email, password } = req.body;
         const newUser: INewUser = {
             firstName,
             lastName,
             email,
-            password
+            password,
+            role: 'User',
         };
-        const id = usersServices.createUser(newUser);
+        const id = await usersServices.createUser(newUser);
         return res.status(201).json({
             success: true,
             message: `User with id ${id} created`,
@@ -60,7 +61,7 @@ const usersControllers = {
             });
         }
 
-        const userToUpdate: IUser = {
+        const userToUpdate: IUserWithoutRole = {
             id,
             firstName,
             lastName,

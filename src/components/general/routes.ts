@@ -3,7 +3,7 @@ import generalController from './controllers';
 const generalRoutes = express.Router();
 
 generalRoutes
-    .get('/health', generalController.health);
+    .get('/', generalController.health);
 
 export default generalRoutes;
 

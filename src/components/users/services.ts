@@ -1,9 +1,14 @@
 import { users } from "../../mockData";
-import { INewUser, IUser, IUserWithoutPassword } from "./interfaces";
+import authServices from "../auth/services";
+import { INewUser, IUser, IUserWithoutPassword, IUserWithoutRole } from "./interfaces";
 
 const usersServices = {
     findUserById: (id: number): IUser | undefined => {
-        let user: IUser | undefined = users.find(element => element.id === id);
+        const user: IUser | undefined = users.find(element => element.id === id);
+        return user;
+    },
+    findUserByEmail: (email: string): IUser | undefined => {
+        const user: IUser | undefined = users.find(element => element.email === email);
         return user;
     },
     getUserWithoutPassword: (user: IUser): IUserWithoutPassword => {
@@ -12,6 +17,7 @@ const usersServices = {
             firstName: user.firstName,
             lastName: user.lastName,
             email: user.email,
+            role: user.role,
         };
     },
     unknownUser: (): IUser => {
@@ -21,6 +27,7 @@ const usersServices = {
                 lastName: 'Doe',
                 email: 'jane@doe.com',
                 password: 'jane',
+                role: 'User',
             };
     },
     getAllUsers: () => {
@@ -30,19 +37,21 @@ const usersServices = {
         });
         return usersWithoutPassword;
     },
-    createUser: (user: INewUser): number => {
+    createUser: async (user: INewUser): Promise<number> => {
         const id = users.length + 1;
+        const hashedPassword = await authServices.hash(user.password);
         const newUser: IUser = {
             id,
             firstName: user.firstName,
             lastName: user.lastName,
             email: user.email,
-            password: user.password
+            password: hashedPassword,
+            role: 'User',
         };
         users.push(newUser);
         return id;
     },
-    updateUser: (userToUpdate: IUser ): Boolean => {
+    updateUser: (userToUpdate: IUserWithoutRole ): Boolean => {
         const { id, firstName, lastName, email, password } = userToUpdate;
         const user = usersServices.findUserById(id);
         if (user && firstName) user.firstName = firstName;
