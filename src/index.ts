@@ -8,7 +8,7 @@ import generalRoutes from './components/general/routes';
 
 const app = express();
 const PORT = 3000;
-const apiPath = '/api/v1'
+const apiPath = '/api/v1';
 
 app.use(express.json());
 app.use(logger);
@@ -20,5 +20,6 @@ app.use(`${apiPath}/comments`, commentsRoutes);
 app.use(`${apiPath}/posts`, postsRoutes);
 
 app.listen(PORT, () => {
-    console.log('Server is running');
+  // eslint-disable-next-line no-console
+  console.log('Server is running');
 });
