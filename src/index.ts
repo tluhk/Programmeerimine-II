@@ -24,5 +24,6 @@ app.use(`${apiPath}/comments`, commentsRoutes);
 app.use(`${apiPath}/posts`, postsRoutes);
 
 app.listen(PORT, () => {
-    console.log('Server is running');
+  // eslint-disable-next-line no-console
+  console.log('Server is running');
 });

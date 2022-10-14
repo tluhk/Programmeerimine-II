@@ -3,6 +3,7 @@ import usersControllers from './controllers';
 import usersMiddlewares from './middlewares';
 import authMiddleware
  from '../auth/middlewares';
+
 const usersRoutes = express.Router();
 
 usersRoutes
