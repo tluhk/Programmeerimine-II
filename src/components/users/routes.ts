@@ -1,6 +1,7 @@
 import express from 'express';
 import usersControllers from './controllers';
 import usersMiddlewares from './middlewares';
+
 import authMiddleware
  from '../auth/middlewares';
 
