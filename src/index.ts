@@ -5,6 +5,8 @@ import postStatusesRoutes from './components/postsStatuses/routes';
 import commentsRoutes from './components/comments/routes';
 import postsRoutes from './components/posts/routes';
 import generalRoutes from './components/general/routes';
+import authController from './components/auth/controllers';
+import authMiddleware from './components/auth/middlewares';
 
 const app = express();
 const PORT = 3000;
@@ -13,7 +15,9 @@ const apiPath = '/api/v1';
 app.use(express.json());
 app.use(logger);
 
+app.post(`${apiPath}/login`, authController.login);
 app.use(`${apiPath}/health`, generalRoutes);
+app.use(authMiddleware.isLoggedIn);
 app.use(`${apiPath}/users`, usersRoutes);
 app.use(`${apiPath}/postStatuses`, postStatusesRoutes);
 app.use(`${apiPath}/comments`, commentsRoutes);

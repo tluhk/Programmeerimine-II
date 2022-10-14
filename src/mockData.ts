@@ -4,13 +4,22 @@ import { IPostStatus } from './components/postsStatuses/interfaces';
 import { IUser } from './components/users/interfaces';
 
 const users: IUser[] = [
-  {
-    id: 1,
-    firstName: 'Juhan',
-    lastName: 'Juurikas',
-    email: 'juhan@juurikas.ee',
-    password: 'juhan',
-  },
+    {
+        id: 1,
+        firstName: 'Juhan',
+        lastName: 'Juurikas',
+        email: 'juhan@juurikas.ee',
+        password: '$2b$10$.XOfSwy.cbdtSeFoStKv4e2XyQV2m91i8h.4tBPxbGw7LzTpfYXCu',
+        role: 'Admin',
+    },
+    {
+        id: 2,
+        firstName: 'Juss',
+        lastName: 'Juurikas',
+        email: 'juss@juurikas.ee',
+        password: '$2b$10$.XOfSwy.cbdtSeFoStKv4e2XyQV2m91i8h.4tBPxbGw7LzTpfYXCu',
+        role: 'User',
+    },
 ];
 
 const posts: IPost[] = [
