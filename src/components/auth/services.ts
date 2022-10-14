@@ -8,7 +8,6 @@ const jwtSecret = 'lkjhnsdzfkljbnwriuhs<,.mcnQÖIODOIHJoqirhasjdnvkösjfc';
 const authServices = {
   hash: async (password: string): Promise<string> => {
     const hash = await bcrypt.hash(password, saltRounds);
-    console.log(hash);
     return hash;
   },
   compare: async (password: string, hash: string): Promise<Boolean> => {
