@@ -26,4 +26,6 @@ interface IUserWithoutPassword {
     role: 'Admin' | 'User';
 }
 
-export { INewUser, IUser, IUserWithoutPassword, IUserWithoutRole };
+export {
+  INewUser, IUser, IUserWithoutPassword, IUserWithoutRole,
+};
