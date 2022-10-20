@@ -1,0 +1,382 @@
+{
+    "openapi":"3.0.2",
+    "info": {
+      "title":"Blog API example",
+      "version":"0.2.0"
+    },
+    "servers": [
+      {
+        "url":"http://localhost:3000/api/v1"
+      }
+    ],
+    "security": [
+      {
+        "bearerAuth": []
+      }
+    ],
+    "components": {
+      "securitySchemes": {
+        "bearerAuth": {
+          "description": "JWT token authorization",
+          "type": "http",
+          "scheme": "bearer",
+          "bearerFormat": "JWT"
+        }
+      },
+      "schemas": {
+        "id": {
+          "type": "integer",
+          "description": "Resource id",
+          "example": 1
+        },
+        "firstName": {
+          "type": "string",
+          "description": "Users first name",
+          "example": "Mati"
+        },
+        "lastName": {
+          "type": "string",
+          "description": "Users last name",
+          "example": "Maasikas"
+        },
+        "email": {
+          "type": "string",
+          "description": "Users email, also used as a users login name",
+          "example": "mati@maasikas.ee"
+        },
+        "password": {
+          "type": "string",
+          "description": "Users password",
+          "example": "MatiMaasikas123"
+        },
+        "role": {
+          "type": "string",
+          "enum": ["Admin", "User"],
+          "default": "User"
+        },
+        "success": {
+          "type": "boolean",
+          "description": "Response success type"
+        },
+        "message": {
+          "type": "string",
+          "description": "Response message"
+        },
+        "User": {
+          "type": "object",
+          "description": "User object",
+          "properties": {
+            "id": {
+              "$ref": "#/components/schemas/id"
+            },
+            "firstName": {
+              "$ref": "#/components/schemas/firstName"
+            },
+            "lastName": {
+              "$ref": "#/components/schemas/lastName"
+            },
+            "email": {
+              "$ref": "#/components/schemas/email"
+            },
+            "role": {
+              "$ref": "#/components/schemas/role"
+            }
+          }
+        },
+        "NewUser": {
+          "type": "object",
+          "properties": {
+            "firstName": {
+              "$ref": "#/components/schemas/firstName"
+            },
+            "lastName": {
+              "$ref": "#/components/schemas/lastName"
+            },
+            "email": {
+              "$ref": "#/components/schemas/email"
+            },
+            "password": {
+              "$ref": "#/components/schemas/password"
+            },
+            "role": {
+              "$ref": "#/components/schemas/role"
+            }
+          }
+        },
+        "Users": {
+          "type": "array",
+          "items": {
+            "$ref": "#/components/schemas/User"
+          }
+        },
+        "NoTokenError": {
+          "description": "Authorization error",
+          "type": "object",
+          "properties": {
+            "success": {
+             "$ref": "#/components/schemas/success"
+            },
+            "message": {
+              "description": "Message",
+              "type": "string"
+            }
+          },
+          "example": {
+            "success": false,
+            "message": "Token not found"
+          }
+        }
+      }
+    },
+    "paths": {
+      "/health": {
+        "get": {
+          "tags": [
+            "API health operations"
+          ],
+          "security": [],
+          "description": "Health endpoint for checking if API is up and running",
+          "responses": {
+            "200": {
+              "description": "Success message",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "success": {
+                        "type": "boolean",
+                        "example": "True"
+                      },
+                      "message": {
+                        "type": "string",
+                        "example": "API is healthy."
+                      }
+                    }
+                  }
+                }
+              }  
+            }
+          }
+        }
+      },
+      "/login": {
+        "post": {
+          "tags": ["Auth operations"],
+          "security": [],
+          "description": "Login endpoint",
+          "requestBody": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "email": {
+                      "type": "string",
+                      "$ref": "#/components/schemas/email"
+                    },
+                    "password": {
+                      "type": "string",
+                      "$ref": "#/components/schemas/password"
+                    }
+                  }
+                }
+              }
+            },
+            "required": true
+          },
+          "responses": {
+            "200": {
+              "description": "Success message with users JWT token",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "success": {
+                        "$ref": "#/components/schemas/success"
+                      },
+                      "message": {
+                        "$ref": "#/components/schemas/message"
+                      },
+                      "token": {
+                        "type": "string",
+                        "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImthdGlAa3V1c2suZWUiLCJyb2xlIjoiVXNlciIsImlhdCI6MTYzMTA4ODA3MSwiZXhwIjoxNjMxMDk1MjcxfQ.tmm9RraUFQjuMfPRenmiehnz7PzR_17F3Nq7WsSHwa4"
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "400": {
+              "description": "Email or password missing or wrong",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "success": {
+                        "$ref": "#/components/schemas/success"
+                      },
+                      "message": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "examples": {
+                    "No email or password": {
+                      "value": {
+                        "success": false,
+                        "message": "Some data is missing (email, password)"
+                      }
+                    },
+                    "User not found": {
+                      "value": {
+                        "success": false,
+                        "message": "User not found"
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "401": {
+              "description": "Wrong password",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "success": {
+                        "$ref": "#/components/schemas/success"
+                      },
+                      "message": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "examples": {
+                    "Wrong password": {
+                      "value": {
+                        "success": false,
+                        "message": "Wrong password"
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "404": {
+              "description": "User not found",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "success": {
+                        "$ref": "#/components/schemas/success"
+                      },
+                      "message": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "examples": {
+                    "User not found": {
+                      "value": {
+                        "success": false,
+                        "message": "User not found"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/users": {
+        "get": {
+          "tags": [
+            "Users operations"
+          ],
+          "description": "Returns list of users",
+          "responses": {
+            "200": {
+              "description": "List of users",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "success": {
+                        "$ref": "#/components/schemas/success"
+                      },
+                      "message": {
+                        "$ref": "#/components/schemas/message",
+                        "example": "List of users"
+                      },
+                      "users": {
+                        "type": "array",
+                        "items": {
+                          "$ref": "#/components/schemas/User"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "401": {
+              "description": "No token error",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/NoTokenError"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "post": {
+          "tags": [
+            "Users operations"
+          ],
+          "description": "Create user",
+          "parameters": [],
+          "requestBody": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "user": {
+                      "type": "object",
+                      "$ref": "#/components/schemas/NewUser"
+                    }
+                  }
+                }
+              }
+            },
+          "required": true
+          },
+          "responses": {
+            "201": {
+              "description": "User created",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+
+    }
+  }
