@@ -1,7 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 import swaggerUi from 'swagger-ui-express';
-import logger from './components/general/middlewares';
+import { logger, loginLogger, userLogger } from './components/general/middlewares';
 import usersRoutes from './components/users/routes';
 import postStatusesRoutes from './components/postsStatuses/routes';
 import commentsRoutes from './components/comments/routes';
@@ -19,12 +19,11 @@ const { port, apiPath } = config;
 
 app.use(cors());
 app.use(express.json());
-app.use(`${apiPath}/api-docs`, swaggerUi.serve, swaggerUi.setup(swaggerDocument));
-app.use(logger);
-
-app.post(`${apiPath}/login`, authController.login);
-app.use(`${apiPath}/health`, generalRoutes);
+app.use(`${apiPath}/api-docs`, logger, swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+app.use(`${apiPath}/health`, logger, generalRoutes);
+app.post(`${apiPath}/login`, loginLogger, authController.login);
 app.use(authMiddleware.isLoggedIn);
+app.use(userLogger);
 app.use(`${apiPath}/users`, usersRoutes);
 app.use(`${apiPath}/postStatuses`, postStatusesRoutes);
 app.use(`${apiPath}/comments`, commentsRoutes);
