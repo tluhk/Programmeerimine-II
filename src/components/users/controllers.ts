@@ -4,11 +4,27 @@ import usersServices from './services';
 
 const usersControllers = {
   getAllUsers: (req: Request, res: Response) => {
-    const usersWithoutPassword = usersServices.getAllUsers();
-    res.status(200).json({
+    if (res.locals.user.role === 'Admin') {
+      const users = usersServices.getAllUsers();
+      return res.status(200).json({
+        success: true,
+        message: 'List of users',
+        users,
+      });
+    }
+    const { id } = res.locals.user;
+    const user: IUser | undefined = usersServices.findUserById(id);
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: 'User not found',
+      });
+    }
+    const userWithoutPassword = usersServices.getUserWithoutPassword(user);
+    return res.status(200).json({
       success: true,
       message: 'List of users',
-      users: usersWithoutPassword,
+      user: userWithoutPassword,
     });
   },
   getUserById: (req: Request, res: Response) => {
