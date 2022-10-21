@@ -13,6 +13,8 @@ import authMiddleware from './components/auth/middlewares';
 import swaggerDocument from '../apidocs/openApi.json';
 
 import config from './apiConfig';
+import usersControllers from './components/users/controllers';
+import usersMiddlewares from './components/users/middlewares';
 
 const app = express();
 const { port, apiPath } = config;
@@ -22,6 +24,7 @@ app.use(express.json());
 app.use(`${apiPath}/api-docs`, logger, swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 app.use(`${apiPath}/health`, logger, generalRoutes);
 app.post(`${apiPath}/login`, loginLogger, authController.login);
+app.post(`${apiPath}/register`, loginLogger, usersMiddlewares.checkCreateUserData, usersControllers.createUser);
 app.use(authMiddleware.isLoggedIn);
 app.use(userLogger);
 app.use(`${apiPath}/users`, usersRoutes);
