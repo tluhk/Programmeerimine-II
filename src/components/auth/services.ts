@@ -1,9 +1,9 @@
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import { IUser } from '../users/interfaces';
+import config from '../../apiConfig';
 
-const saltRounds = 10;
-const jwtSecret = 'lkjhnsdzfkljbnwriuhs<,.mcnQÖIODOIHJoqirhasjdnvkösjfc';
+const { saltRounds, jwtSecret } = config;
 
 const authServices = {
   hash: async (password: string): Promise<string> => {

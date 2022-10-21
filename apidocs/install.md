@@ -11,7 +11,8 @@ cd Programmeerimine-II
 ```bash
 npm install
 ```
-4. Käivita projekt
+4. `\src` kausta loo `apiConfigSample.ts` faili alusel `apiConfig.ts` fail oma poolt valitud väärtustega (port, jwtSecret jne)
+5. Käivita projekt
 ```bash
 npm start
 ```

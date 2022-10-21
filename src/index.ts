@@ -12,9 +12,10 @@ import authMiddleware from './components/auth/middlewares';
 
 import swaggerDocument from '../apidocs/openApi.json';
 
+import config from './apiConfig';
+
 const app = express();
-const PORT = 3000;
-const apiPath = '/api/v1';
+const { port, apiPath } = config;
 
 app.use(cors());
 app.use(express.json());
@@ -29,7 +30,7 @@ app.use(`${apiPath}/postStatuses`, postStatusesRoutes);
 app.use(`${apiPath}/comments`, commentsRoutes);
 app.use(`${apiPath}/posts`, postsRoutes);
 
-app.listen(PORT, () => {
+app.listen(port, () => {
   // eslint-disable-next-line no-console
   console.log('Server is running');
 });
