@@ -1,5 +1,6 @@
 import express from 'express';
 import cors from 'cors';
+import swaggerUi from 'swagger-ui-express';
 import logger from './components/general/middlewares';
 import usersRoutes from './components/users/routes';
 import postStatusesRoutes from './components/postsStatuses/routes';
@@ -9,8 +10,7 @@ import generalRoutes from './components/general/routes';
 import authController from './components/auth/controllers';
 import authMiddleware from './components/auth/middlewares';
 
-const swaggerUi = require('swagger-ui-express');
-const swaggerDocument = require('../apidocs/openApi.json');
+import swaggerDocument from '../apidocs/openApi.json';
 
 const app = express();
 const PORT = 3000;
