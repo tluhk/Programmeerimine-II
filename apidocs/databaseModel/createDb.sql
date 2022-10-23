@@ -1,0 +1,72 @@
+CREATE SCHEMA IF NOT EXISTS `blog`;
+
+CREATE TABLE IF NOT EXISTS `blog`.`statuses` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `status` VARCHAR(45) NULL,
+  `createdDate` DATETIME NULL DEFAULT CURRENT_TIMESTAMP,
+  `updatedDate` DATETIME NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `deletedDate` DATETIME NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE INDEX `id_UNIQUE` (`id` ASC) VISIBLE,
+  UNIQUE INDEX `status_UNIQUE` (`status` ASC) VISIBLE);
+
+CREATE TABLE IF NOT EXISTS `blog`.`users` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `firstName` VARCHAR(255) NULL,
+  `lastName` VARCHAR(255) NULL,
+  `email` VARCHAR(255) NULL,
+  `role` VARCHAR(45) NULL DEFAULT 'User',
+  `password` VARCHAR(255) NULL,
+  `createdDate` DATETIME NULL DEFAULT CURRENT_TIMESTAMP,
+  `updatedDate` DATETIME NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `deletedDate` DATETIME NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE INDEX `id_UNIQUE` (`id` ASC) VISIBLE,
+  UNIQUE INDEX `email_UNIQUE` (`email` ASC) VISIBLE);
+
+CREATE TABLE IF NOT EXISTS `blog`.`posts` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `title` VARCHAR(255) NULL,
+  `content` LONGTEXT NULL,
+  `createdDate` DATETIME NULL DEFAULT CURRENT_TIMESTAMP,
+  `updatedDate` DATETIME NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `deletedDate` DATETIME NULL DEFAULT NULL,
+  `userId` INT NOT NULL,
+  `statusId` INT NOT NULL,
+  PRIMARY KEY (`id`, `userId`, `statusId`),
+  UNIQUE INDEX `id_UNIQUE` (`id` ASC) VISIBLE,
+  INDEX `fk_posts_users_idx` (`userId` ASC) VISIBLE,
+  INDEX `fk_posts_statuses1_idx` (`statusId` ASC) VISIBLE,
+  CONSTRAINT `fk_posts_users`
+    FOREIGN KEY (`userId`)
+    REFERENCES `blog`.`users` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_posts_statuses1`
+    FOREIGN KEY (`statusId`)
+    REFERENCES `blog`.`statuses` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION);
+
+CREATE TABLE IF NOT EXISTS `blog`.`comments` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `content` LONGTEXT NULL,
+  `createdDate` DATETIME NULL DEFAULT CURRENT_TIMESTAMP,
+  `updatedDate` DATETIME NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `deletedDate` DATETIME NULL DEFAULT NULL,
+  `postId` INT NOT NULL,
+  `userId` INT NULL DEFAULT NULL,
+  PRIMARY KEY (`id`, `postId`),
+  UNIQUE INDEX `id_UNIQUE` (`id` ASC) VISIBLE,
+  INDEX `fk_comments_posts1_idx` (`postId` ASC) VISIBLE,
+  INDEX `fk_comments_users1_idx` (`userId` ASC) VISIBLE,
+  CONSTRAINT `fk_comments_posts1`
+    FOREIGN KEY (`postId`)
+    REFERENCES `blog`.`posts` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_comments_users1`
+    FOREIGN KEY (`userId`)
+    REFERENCES `blog`.`users` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION);
