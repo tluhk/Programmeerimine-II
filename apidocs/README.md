@@ -3,6 +3,10 @@
 ### API töötamise kontrollimiseks
 - `GET /api/v1/health/`
 
+### Registreerumine ja sisselogimine
+- Registreerumine: `POST /api/v1/register/`
+- Sisselogimine: `POST /api/v1/login/`
+
 ### Kasutajatega seotud
 - [Kasutajate pärimine](./endpoints/users/get.md#list-of-users): `GET /api/v1/users/`
 - [Kasutaja pärimine id alusel](./endpoints/users/get.md#user-by-id): `GET /api/v1/users/:id/`
