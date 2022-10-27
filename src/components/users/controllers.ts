@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { INewUser, IUser, IUserWithoutRole } from './interfaces';
+import { IUser } from './interfaces';
 import usersServices from './services';
 
 const usersControllers = {
@@ -47,7 +47,7 @@ const usersControllers = {
     const {
       firstName, lastName, email, password,
     } = req.body;
-    const newUser: INewUser = {
+    const newUser: IUser = {
       firstName,
       lastName,
       email,
@@ -79,7 +79,7 @@ const usersControllers = {
       });
     }
 
-    const userToUpdate: IUserWithoutRole = {
+    const userToUpdate: IUser = {
       id,
       firstName,
       lastName,

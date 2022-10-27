@@ -1,9 +1,7 @@
 import pool from '../../database';
 import { FieldPacket, ResultSetHeader } from 'mysql2';
 import authServices from '../auth/services';
-import {
-  INewUser, IUser, IUserWithoutPassword, IUserWithoutRole,IUserSQL, INewUserSQL
-} from './interfaces';
+import { IUser, IUserSQL } from './interfaces';
 
 const usersServices = {
   findUserById: async (id: number) => {
@@ -18,7 +16,7 @@ const usersServices = {
     const [users]: [IUserSQL[], FieldPacket[]] = await pool.query('SELECT id, firstName, lastName, email, role, createdDate FROM users WHERE deletedDate IS NULL;');
     return users;
   },
-  createUser: async (user: INewUser): Promise<number> => {
+  createUser: async (user: IUser): Promise<number> => {
     const hashedPassword = await authServices.hash(user.password);
     const newUser = {
       firstName: user.firstName,
@@ -30,12 +28,12 @@ const usersServices = {
     const [result]: [ResultSetHeader, FieldPacket[]] = await pool.query('INSERT INTO users SET ?;', [newUser]);
     return result.insertId;
   },
-  updateUser: async (userToUpdate: IUserWithoutRole): Promise<Boolean> => {
+  updateUser: async (userToUpdate: IUser): Promise<Boolean> => {
     const {
       id, firstName, lastName, email, password
     } = userToUpdate;
 
-    const user = await usersServices.findUserById(id);
+    const user = await usersServices.findUserById(id!);
 
     let hashedPassword = null;
     if (password) {

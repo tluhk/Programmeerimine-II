@@ -1,45 +1,14 @@
 import { RowDataPacket } from 'mysql2';
 
-interface INewUser {
+interface IUser {
+    id?: number;
     firstName: string;
     lastName: string;
     email: string;
     password: string;
-    role: 'Admin' | 'User';
+    role?: 'Admin' | 'User';
 }
 
-interface IUser extends INewUser {
-    id: number;
-}
+interface IUserSQL extends IUser, RowDataPacket {}
 
-interface INewUserSQL {
-    firstName: string;
-    lastName: string;
-    email: string;
-    password: string;
-    role: 'Admin' | 'User';
-}
-
-interface IUserSQL extends INewUser, RowDataPacket {
-    id: number;
-}
-
-interface IUserWithoutRole {
-    id: number;
-    firstName: string;
-    lastName: string;
-    email: string;
-    password: string;
-}
-
-interface IUserWithoutPassword {
-    id: number;
-    firstName: string;
-    lastName: string;
-    email: string;
-    role: 'Admin' | 'User';
-}
-
-export {
-  INewUser, IUser, IUserWithoutPassword, IUserWithoutRole, IUserSQL, INewUserSQL
-};
+export { IUser, IUserSQL };
