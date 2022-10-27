@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { INewComment } from './interfaces';
+import { IComment } from './interfaces';
 import commentsService from './services';
 
 const commentsController = {
@@ -40,7 +40,7 @@ const commentsController = {
     }
     if (!userId) userId = null;
 
-    const newComment: INewComment = {
+    const newComment: IComment = {
       userId,
       postId,
       content,

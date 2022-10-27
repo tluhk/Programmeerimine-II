@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import commentsService from '../comments/services';
-import { INewPost, IPostToUpdate } from './interfaces';
+import { IPost, IPostSQL } from './interfaces';
 import postsService from './services';
 
 const postsController = {
@@ -52,7 +52,7 @@ const postsController = {
         message: 'Some data is missing (title, content, userId, statusId)',
       });
     }
-    const newPost: INewPost = {
+    const newPost: IPost = {
       title,
       content,
       userId,
@@ -80,7 +80,7 @@ const postsController = {
         message: 'Nothing to change',
       });
     }
-    const postToUpdate: IPostToUpdate = {
+    const postToUpdate: IPost = {
       id,
       title,
       content,

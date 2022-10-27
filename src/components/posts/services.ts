@@ -2,7 +2,7 @@ import { posts } from '../../mockData';
 import postStatusesService from '../postsStatuses/services';
 import { IUser } from '../users/interfaces';
 import usersServices from '../users/services';
-import { INewPost, IPost, IPostToUpdate } from './interfaces';
+import { IPost, IPostSQL } from './interfaces';
 
 const postsService = {
   getAllPosts: () => {
@@ -16,7 +16,7 @@ const postsService = {
     const post = posts.find((element) => element.id === id);
     return post;
   },
-  createPost: (newPost: INewPost): number => {
+  createPost: (newPost: IPost): number => {
     const id = posts.length + 1;
     const post: IPost = {
       id,
@@ -25,11 +25,11 @@ const postsService = {
     posts.push(post);
     return id;
   },
-  updatePost: (postToUpdate: IPostToUpdate) => {
+  updatePost: (postToUpdate: IPost) => {
     const {
       id, title, content, statusId,
     } = postToUpdate;
-    const post = postsService.getPostById(id);
+    const post = postsService.getPostById(id!);
     if (post && title) post.title = title;
     if (post && content) post.content = content;
     if (post && statusId) post.statusId = statusId;
@@ -42,8 +42,8 @@ const postsService = {
     return true;
   },
   getPostWithStatusAndUser: (post: IPost) => {
-    const postStatus = postStatusesService.getPostStatusById(post.statusId);
-    let user = usersServices.findUserById(post.userId);
+    const postStatus = postStatusesService.getPostStatusById(post.statusId!);
+    let user = usersServices.findUserById(post.userId!);
 
     const postWithStatusAndUser = {
       id: post.id,

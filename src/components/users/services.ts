@@ -32,7 +32,6 @@ const usersServices = {
     const {
       id, firstName, lastName, email, password
     } = userToUpdate;
-
     const user = await usersServices.findUserById(id!);
 
     let hashedPassword = null;

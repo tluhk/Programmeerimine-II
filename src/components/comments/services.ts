@@ -1,12 +1,12 @@
 import { comments } from '../../mockData';
 import { IUser } from '../users/interfaces';
 import usersServices from '../users/services';
-import { IComment, INewComment } from './interfaces';
+import { IComment, ICommentSQL } from './interfaces';
 
 const commentsService = {
   getAllComments: () => {
     const commentsWithUsers = comments.map((comment) => {
-      let user = usersServices.findUserById(comment.id);
+      let user = usersServices.findUserById(comment.id!);
       const commentWithUser = {
         id: comment.id,
         content: comment.content,
@@ -24,7 +24,7 @@ const commentsService = {
     const postComments = comments.filter((comment) => comment.postId === id);
     return postComments;
   },
-  createComment: (newComment: INewComment) => {
+  createComment: (newComment: IComment) => {
     const id = comments.length + 1;
     const comment: IComment = {
       id,
