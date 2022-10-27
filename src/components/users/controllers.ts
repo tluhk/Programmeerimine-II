@@ -3,9 +3,9 @@ import { INewUser, IUser, IUserWithoutRole } from './interfaces';
 import usersServices from './services';
 
 const usersControllers = {
-  getAllUsers: (req: Request, res: Response) => {
+  getAllUsers: async (req: Request, res: Response) => {
     if (res.locals.user.role === 'Admin') {
-      const users = usersServices.getAllUsers();
+      const users = await usersServices.getAllUsers();
       return res.status(200).json({
         success: true,
         message: 'List of users',
@@ -13,35 +13,33 @@ const usersControllers = {
       });
     }
     const { id } = res.locals.user;
-    const user: IUser | undefined = usersServices.findUserById(id);
+    const user = usersServices.findUserById(id);
     if (!user) {
       return res.status(404).json({
         success: false,
         message: 'User not found',
       });
     }
-    const userWithoutPassword = usersServices.getUserWithoutPassword(user);
     return res.status(200).json({
       success: true,
       message: 'List of users',
-      user: userWithoutPassword,
+      user,
     });
   },
-  getUserById: (req: Request, res: Response) => {
+  getUserById: async (req: Request, res: Response) => {
     const id = parseInt(req.params.id, 10);
-    const user: IUser | undefined = usersServices.findUserById(id);
+    const user = await usersServices.findUserById(id);
     if (!user) {
       return res.status(404).json({
         success: false,
         message: 'User not found',
       });
     }
-    const userWithoutPassword = usersServices.getUserWithoutPassword(user);
     return res.status(200).json({
       success: true,
       message: 'User',
       data: {
-        user: userWithoutPassword,
+        user,
       },
     });
   },
@@ -62,12 +60,12 @@ const usersControllers = {
       message: `User with id ${id} created`,
     });
   },
-  updateUser: (req: Request, res: Response) => {
+  updateUser: async (req: Request, res: Response) => {
     const id = parseInt(req.params.id, 10);
     const {
       firstName, lastName, email, password,
     } = req.body;
-    const user: IUser | undefined = usersServices.findUserById(id);
+    const user = await usersServices.findUserById(id);
     if (!user) {
       return res.status(404).json({
         success: false,
@@ -96,15 +94,16 @@ const usersControllers = {
       message: 'User updated',
     });
   },
-  deleteUser: (req: Request, res: Response) => {
+  deleteUser: async (req: Request, res: Response) => {
     const id = parseInt(req.params.id, 10);
-    const result = usersServices.deleteUser(id);
-    if (!result) {
+    const user = await usersServices.findUserById(id);
+    if (!user) {
       return res.status(404).json({
         success: false,
         message: 'User not found',
       });
     }
+    const result = await usersServices.deleteUser(id);
 
     return res.status(200).json({
       success: true,

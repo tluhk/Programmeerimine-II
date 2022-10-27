@@ -6,13 +6,11 @@ import { IComment, INewComment } from './interfaces';
 const commentsService = {
   getAllComments: () => {
     const commentsWithUsers = comments.map((comment) => {
-      let user: IUser | undefined = usersServices.findUserById(comment.id);
-      if (!user) user = usersServices.unknownUser();
-      const userWithoutPassword = usersServices.getUserWithoutPassword(user);
+      let user = usersServices.findUserById(comment.id);
       const commentWithUser = {
         id: comment.id,
         content: comment.content,
-        user: userWithoutPassword,
+        user,
       };
       return commentWithUser;
     });

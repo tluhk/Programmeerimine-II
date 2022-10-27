@@ -43,15 +43,13 @@ const postsService = {
   },
   getPostWithStatusAndUser: (post: IPost) => {
     const postStatus = postStatusesService.getPostStatusById(post.statusId);
-    let user: IUser | undefined = usersServices.findUserById(post.userId);
-    if (!user) user = usersServices.unknownUser();
-    const userWithoutPassword = usersServices.getUserWithoutPassword(user);
+    let user = usersServices.findUserById(post.userId);
 
     const postWithStatusAndUser = {
       id: post.id,
       title: post.title,
       content: post.content,
-      user: userWithoutPassword,
+      user,
       status: postStatus,
     };
     return postWithStatusAndUser;
