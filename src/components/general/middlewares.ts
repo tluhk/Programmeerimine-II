@@ -19,10 +19,10 @@ export const userLogger = (req: Request, res: Response, next: NextFunction) => {
 };
 
 export const errorHandler = (err: any, req: Request, res: Response, next: NextFunction) => {
-  console.error(err.stack);
+  console.log(err);
   res.status(500).json({
     success: false,
-    message: 'Something broke!',
+    message: err.message || 'Something broke!',
   });
 };
 

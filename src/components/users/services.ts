@@ -16,7 +16,7 @@ const usersServices = {
     const [users]: [IUserSQL[], FieldPacket[]] = await pool.query('SELECT id, firstName, lastName, email, role, createdDate FROM users WHERE deletedDate IS NULL;');
     return users;
   },
-  createUser: async (user: IUser): Promise<number> => {
+  createUser: async (user: IUser): Promise<number | Boolean> => {
     const hashedPassword = await authServices.hash(user.password);
     const newUser = {
       firstName: user.firstName,
@@ -26,6 +26,7 @@ const usersServices = {
       role: 'User',
     };
     const [result]: [ResultSetHeader, FieldPacket[]] = await pool.query('INSERT INTO users SET ?;', [newUser]);
+    return false;
     return result.insertId;
   },
   updateUser: async (userToUpdate: IUser): Promise<Boolean> => {
@@ -45,13 +46,17 @@ const usersServices = {
       password: hashedPassword || user.password,
     };
 
-    const result = await pool.query('UPDATE users SET ? WHERE id=?;', [update, id]);
-
+    const [result]: [ResultSetHeader, FieldPacket[]] = await pool.query('UPDATE users SET ? WHERE id=?;', [update, id]);
+    if (result.affectedRows < 1) {
+      return false;
+    }
     return true;
   },
   deleteUser: async (id: number): Promise<Boolean> => {
-    const result = await pool.query('UPDATE users SET deletedDate=? WHERE id=?;', [new Date(), id]);
-    console.log(result);
+    const [result]: [ResultSetHeader, FieldPacket[]] = await pool.query('UPDATE users SET deletedDate=? WHERE id=?;', [new Date(), id]);
+    if (result.affectedRows < 1) {
+      return false;
+    }
     return true;
   },
 };
