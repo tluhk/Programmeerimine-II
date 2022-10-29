@@ -1,3 +1,36 @@
+### Ressursid
+```mermaid
+erDiagram
+    user ||--o{post:creates
+    user ||--o{comment:creates
+    user {
+        id number
+        firstName string
+        lastName string
+        email string
+        password string
+        role enum
+    }
+    post ||--o|postStatus:has
+    post ||--o{comment:may_have
+    post {
+        id number
+        title string
+        content text
+
+    }
+    postStatus
+    postStatus {
+        id number
+        status string
+    }
+    comment
+    comment {
+        id number
+        content text
+    }
+```
+
 ### Endpoindid
 
 ### API töötamise kontrollimiseks
