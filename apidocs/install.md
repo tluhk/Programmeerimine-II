@@ -17,6 +17,6 @@ npm install
 npm start
 ```
 API töötamist saad kontrollida:
-```bash
-GET [http://localhost:3000/api/v1/health](http://localhost:3000/api/v1/health)
-```
+`
+[http://localhost:3000/api/v1/health](http://localhost:3000/api/v1/health)
+`
