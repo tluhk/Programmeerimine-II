@@ -1,8 +1,6 @@
-import { comments } from '../../mockData';
-import usersServices from '../users/services';
 import { IComment, ICommentSQL } from './interfaces';
 import pool from '../../database';
-import { FieldPacket, ResultSetHeader, RowDataPacket } from 'mysql2';
+import { FieldPacket, ResultSetHeader } from 'mysql2';
 
 const commentsService = {
   getAllComments: async (): Promise<ICommentSQL[]> => {

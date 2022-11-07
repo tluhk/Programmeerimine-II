@@ -1,6 +1,5 @@
 import { FieldPacket } from 'mysql2';
-import { postStatuses } from '../../mockData';
-import { IPostStatus, IPostStatusSQL  } from './interfaces';
+import { IPostStatusSQL  } from './interfaces';
 import pool from '../../database';
 
 const postStatusesService = {
