@@ -31,14 +31,13 @@ const commentsController = {
   },
   createComment: async (req: Request, res: Response) => {
     const { postId, content } = req.body;
-    let { userId } = req.body;
+    let userId = res.locals.user?.id || null;
     if (!postId || !content) {
       return res.status(400).json({
         success: false,
         message: 'Some data is missing (postId, content)',
       });
     }
-    if (!userId) userId = null;
 
     const newComment: IComment = {
       userId,

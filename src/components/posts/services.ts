@@ -14,10 +14,7 @@ const postsService = {
     const [posts]: [IPostSQL[], FieldPacket[]] = await pool.query('SELECT * FROM posts WHERE id = ? AND deletedDate IS NULL;', [id]);
     return posts[0];
   },
-  createPost: async (newPost: IPost): Promise<number> => {
-    const post: IPost = {
-      ...newPost,
-    };
+  createPost: async (post: IPost): Promise<number> => {
     const [result]: [ResultSetHeader, FieldPacket[]] = await pool.query('INSERT INTO posts SET ?;', [post]);
     return result.insertId;
   },

@@ -43,9 +43,10 @@ const postsController = {
   },
   createPost: async (req: Request, res: Response) => {
     const {
-      title, content, userId, statusId,
+      title, content, statusId,
     } = req.body;
-    if (!title || !content || !userId || !statusId) {
+    const userId = res.locals.user?.id;
+    if (!title || !content || !statusId) {
       return res.status(400).json({
         success: false,
         message: 'Some data is missing (title, content, userId, statusId)',
@@ -54,8 +55,8 @@ const postsController = {
     const newPost: IPost = {
       title,
       content,
-      userId,
       statusId,
+      userId,
     };
     const id = await postsService.createPost(newPost);
     return res.status(201).json({
