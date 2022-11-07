@@ -1,42 +1,34 @@
 import { comments } from '../../mockData';
-import { IUser } from '../users/interfaces';
 import usersServices from '../users/services';
 import { IComment, ICommentSQL } from './interfaces';
+import pool from '../../database';
+import { FieldPacket, ResultSetHeader, RowDataPacket } from 'mysql2';
 
 const commentsService = {
-  getAllComments: () => {
-    const commentsWithUsers = comments.map((comment) => {
-      let user = usersServices.findUserById(comment.id!);
-      const commentWithUser = {
-        id: comment.id,
-        content: comment.content,
-        user,
-      };
-      return commentWithUser;
-    });
-    return commentsWithUsers;
+  getAllComments: async (): Promise<ICommentSQL[]> => {
+    const [comments]: [ICommentSQL[], FieldPacket[]] = await pool.query('SELECT * FROM comments WHERE deletedDate IS NULL;');
+    return comments;
   },
-  getCommentById: (id: number): IComment | undefined => {
-    const comment = comments.find((element) => element.id === id);
-    return comment;
+  getCommentById: async (id: number): Promise<ICommentSQL> => {
+    const [comments]: [ICommentSQL[], FieldPacket[]] = await pool.query('SELECT * FROM comments WHERE id = ? AND deletedDate IS NULL;', [id]);
+    return comments[0];
   },
-  findCommentsByPostId: (id: number): IComment[] => {
-    const postComments = comments.filter((comment) => comment.postId === id);
-    return postComments;
+  findCommentsByPostId: async (id: number): Promise<ICommentSQL[]> => {
+    const [comments]: [ICommentSQL[], FieldPacket[]] = await pool.query('SELECT * FROM comments WHERE postId = ? AND deletedDate IS NULL;', [id]);
+    return comments;
   },
-  createComment: (newComment: IComment) => {
-    const id = comments.length + 1;
+  createComment: async  (newComment: IComment): Promise<number> => {
     const comment: IComment = {
-      id,
       ...newComment,
     };
-    comments.push(comment);
-    return id;
+    const [result]: [ResultSetHeader, FieldPacket[]] = await pool.query('INSERT INTO comments SET ?;', [comment]);
+    return result.insertId;
   },
-  deleteComment: (id: number): Boolean => {
-    const index = comments.findIndex((element) => element.id === id);
-    if (index === -1) return false;
-    comments.splice(index, 1);
+  deleteComment: async (id: number): Promise<Boolean> => {
+    const [result]: [ResultSetHeader, FieldPacket[]] = await pool.query('UPDATE comments SET deletedDate = ? WHERE id = ?;', [Date.now(), id]);
+    if (result.affectedRows < 1) {
+      return false;
+    }
     return true;
   },
 };

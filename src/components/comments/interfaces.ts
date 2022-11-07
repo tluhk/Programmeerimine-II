@@ -7,6 +7,6 @@ interface IComment {
     content: string;
 }
 
-interface ICommentSQL extends IComment {}
+interface ICommentSQL extends IComment, RowDataPacket {}
 
 export { IComment, ICommentSQL };

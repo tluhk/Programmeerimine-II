@@ -26,7 +26,6 @@ const usersServices = {
       role: 'User',
     };
     const [result]: [ResultSetHeader, FieldPacket[]] = await pool.query('INSERT INTO users SET ?;', [newUser]);
-    return false;
     return result.insertId;
   },
   updateUser: async (userToUpdate: IUser): Promise<Boolean> => {

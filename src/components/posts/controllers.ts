@@ -31,9 +31,9 @@ const postsController = {
       },
     });
   },
-  getPostComment: (req: Request, res: Response) => {
+  getPostComment: async (req: Request, res: Response) => {
     const id = parseInt(req.params.id, 10);
-    const comments = commentsService.findCommentsByPostId(id);
+    const comments = await commentsService.findCommentsByPostId(id);
     return res.status(200).json({
       success: true,
       message: `Comments of post with id: ${id}`,
