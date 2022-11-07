@@ -1,17 +1,30 @@
 import { FieldPacket, ResultSetHeader } from 'mysql2';
 import pool from '../../database';
-import { posts } from '../../mockData';
-import postStatusesService from '../postsStatuses/services';
-import usersServices from '../users/services';
 import { IPost, IPostSQL } from './interfaces';
 
 const postsService = {
   getAllPosts: async (): Promise<IPostSQL[]> => {
-    const [posts]: [IPostSQL[], FieldPacket[]] = await pool.query('SELECT * FROM posts WHERE deletedDate IS NULL;');
+    const [posts]: [IPostSQL[], FieldPacket[]] = await pool.query(
+      `SELECT
+      P.id, P.title, P.content, P.createdDate, U.id AS userId, U.firstName, U.lastName
+      FROM
+        posts P
+      INNER JOIN
+        users U ON P.userId = U.id
+      WHERE P.deletedDate IS NULL;`
+    );
     return posts;
   },
   getPostById: async (id: number): Promise<IPostSQL> => {
-    const [posts]: [IPostSQL[], FieldPacket[]] = await pool.query('SELECT * FROM posts WHERE id = ? AND deletedDate IS NULL;', [id]);
+    const [posts]: [IPostSQL[], FieldPacket[]] = await pool.query(
+      `SELECT
+      P.id, P.title, P.content, P.createdDate, U.id AS userId, U.firstName, U.lastName
+      FROM
+        posts P
+      INNER JOIN
+        users U ON P.userId = U.id
+      WHERE P.id = ? AND P.deletedDate IS NULL;`, [id]
+      );
     return posts[0];
   },
   createPost: async (post: IPost): Promise<number> => {
