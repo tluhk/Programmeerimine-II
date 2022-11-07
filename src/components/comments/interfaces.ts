@@ -1,11 +1,12 @@
-interface INewComment {
+import { RowDataPacket } from 'mysql2';
+
+interface IComment {
+    id?: number;
     userId: number;
     postId: number;
     content: string;
 }
 
-interface IComment extends INewComment {
-    id: number;
-}
+interface ICommentSQL extends IComment, RowDataPacket {}
 
-export { INewComment, IComment };
+export { IComment, ICommentSQL };

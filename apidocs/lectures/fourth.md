@@ -13,8 +13,13 @@ Nimetatud image kasutamiseks tee nii:
   - MySQL/Mariadb
 
 - **Kood**
-
+ - [Kood peale neljandat loengut](https://github.com/tluhk/Programmeerimine-II/tree/b228da8f6e10a0f0a98baa962dbdfa68296fdc6e)
 
 - **Loengus kõlanud märksõnad**
   - Docker
-  
+  - `Interface`de muutmine SQL-päringute vastustega klappimiseks
+  - Uued `Interface`d selleks, et esimese hooga kood liiga katki ei läheks
+  - `SQL` [update](https://dev.mysql.com/doc/refman/8.0/en/insert.html) päring nii `SET` käsuga kui ilma
+  - `MySQL`-i `npm` pakk aitab objekti otse päringusse kirjutada
+  - `SQL Injection` ja selle vältimine
+  - Vigade haldamine `express` API-s

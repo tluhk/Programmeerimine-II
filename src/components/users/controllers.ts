@@ -1,87 +1,79 @@
-import { Request, Response } from 'express';
-import { INewUser, IUser, IUserWithoutRole } from './interfaces';
+import { NextFunction, Request, Response } from 'express';
+import { IUser } from './interfaces';
 import usersServices from './services';
 
 const usersControllers = {
-  getAllUsers: (req: Request, res: Response) => {
-    if (res.locals.user.role === 'Admin') {
-      const users = usersServices.getAllUsers();
+  getAllUsers: async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      let users;
+      if (res.locals.user.role === 'Admin') {
+        users = await usersServices.getAllUsers();
+      } else {
+        const { id } = res.locals.user;
+        users = usersServices.findUserById(id);
+      }
+
       return res.status(200).json({
         success: true,
         message: 'List of users',
         users,
       });
+    } catch (error) {
+      next(error);
     }
-    const { id } = res.locals.user;
-    const user: IUser | undefined = usersServices.findUserById(id);
-    if (!user) {
-      return res.status(404).json({
-        success: false,
-        message: 'User not found',
-      });
-    }
-    const userWithoutPassword = usersServices.getUserWithoutPassword(user);
-    return res.status(200).json({
-      success: true,
-      message: 'List of users',
-      user: userWithoutPassword,
-    });
+    
   },
-  getUserById: (req: Request, res: Response) => {
-    const id = parseInt(req.params.id, 10);
-    const user: IUser | undefined = usersServices.findUserById(id);
-    if (!user) {
-      return res.status(404).json({
-        success: false,
-        message: 'User not found',
+  getUserById: async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const id = parseInt(req.params.id, 10);
+      const user = await usersServices.findUserById(id);
+      if (!user) throw new Error('User not found');
+      return res.status(200).json({
+        success: true,
+        message: 'User',
+        data: {
+          user,
+        },
       });
+    } catch (error) {
+      next(error);
     }
-    const userWithoutPassword = usersServices.getUserWithoutPassword(user);
-    return res.status(200).json({
-      success: true,
-      message: 'User',
-      data: {
-        user: userWithoutPassword,
-      },
-    });
   },
-  createUser: async (req: Request, res: Response) => {
+  createUser: async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const {
+        firstName, lastName, email, password,
+      } = req.body;
+      const newUser: IUser = {
+        firstName,
+        lastName,
+        email,
+        password,
+        role: 'User',
+      };
+      const id = await usersServices.createUser(newUser);
+      if (!id) throw new Error('Something happened while creating user.');
+      return res.status(201).json({
+        success: true,
+        message: `User with id ${id} created`,
+      });
+    } catch (error) {
+      next(error);
+    }
+    
+  },
+  updateUser: async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const id = parseInt(req.params.id, 10);
     const {
       firstName, lastName, email, password,
     } = req.body;
-    const newUser: INewUser = {
-      firstName,
-      lastName,
-      email,
-      password,
-      role: 'User',
-    };
-    const id = await usersServices.createUser(newUser);
-    return res.status(201).json({
-      success: true,
-      message: `User with id ${id} created`,
-    });
-  },
-  updateUser: (req: Request, res: Response) => {
-    const id = parseInt(req.params.id, 10);
-    const {
-      firstName, lastName, email, password,
-    } = req.body;
-    const user: IUser | undefined = usersServices.findUserById(id);
-    if (!user) {
-      return res.status(404).json({
-        success: false,
-        message: 'User not found',
-      });
-    }
-    if (!firstName && !lastName && !email && !password) {
-      return res.status(400).json({
-        success: false,
-        message: 'Nothing to change',
-      });
-    }
 
-    const userToUpdate: IUserWithoutRole = {
+    const user = await usersServices.findUserById(id);
+    if (!user) throw new Error('User not found');
+    if (!firstName && !lastName && !email && !password) throw new Error('Nothing to change');
+
+    const userToUpdate: IUser = {
       id,
       firstName,
       lastName,
@@ -89,27 +81,30 @@ const usersControllers = {
       password,
     };
 
-    usersServices.updateUser(userToUpdate);
-
+    const result = usersServices.updateUser(userToUpdate);
+    if (!result) throw new Error('Something happened while updating user');
     return res.status(200).json({
       success: true,
       message: 'User updated',
     });
-  },
-  deleteUser: (req: Request, res: Response) => {
-    const id = parseInt(req.params.id, 10);
-    const result = usersServices.deleteUser(id);
-    if (!result) {
-      return res.status(404).json({
-        success: false,
-        message: 'User not found',
-      });
+    } catch (error) {
+      next(error);
     }
-
-    return res.status(200).json({
-      success: true,
-      message: 'User deleted',
-    });
+  },
+  deleteUser: async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const id = parseInt(req.params.id, 10);
+      const user = await usersServices.findUserById(id);
+      if (!user) throw new Error('User not found');
+      const result = await usersServices.deleteUser(id);
+      if (!result) throw new Error('Something happened while deleting user');
+      return res.status(200).json({
+        success: true,
+        message: 'User deleted',
+      });
+    } catch (error) {
+      next(error);
+    }
   },
 };
 

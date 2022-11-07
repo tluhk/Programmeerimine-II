@@ -6,10 +6,7 @@ const usersMiddlewares = {
       firstName, lastName, email, password,
     } = req.body;
     if (!firstName || !lastName || !email || !password) {
-      return res.status(400).json({
-        success: false,
-        message: 'Some data is missing (firstName, lastName, email, password)',
-      });
+      throw new Error('Some data is missing (firstName, lastName, email, password)');
     }
     return next();
   },

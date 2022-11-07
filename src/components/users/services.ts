@@ -1,69 +1,61 @@
-import { users } from '../../mockData';
+import pool from '../../database';
+import { FieldPacket, ResultSetHeader } from 'mysql2';
 import authServices from '../auth/services';
-import {
-  INewUser, IUser, IUserWithoutPassword, IUserWithoutRole,
-} from './interfaces';
+import { IUser, IUserSQL } from './interfaces';
 
 const usersServices = {
-  findUserById: (id: number): IUser | undefined => {
-    const user: IUser | undefined = users.find((element) => element.id === id);
-    return user;
+  findUserById: async (id: number) => {
+    const [user]: [IUserSQL[], FieldPacket[]] = await pool.query(`SELECT id, firstName, lastName, email, role, createdDate FROM users WHERE id=? AND deletedDate IS NULL;`, [id]);
+    return user[0];
   },
-  findUserByEmail: (email: string): IUser | undefined => {
-    const user: IUser | undefined = users.find((element) => element.email === email);
-    return user;
+  findUserByEmail: async (email: string) => {
+    const [user]: [IUserSQL[], FieldPacket[]] = await pool.query(`SELECT id, email, password, role FROM users WHERE email=? AND deletedDate IS NULL;`, [email]);
+    return user[0];
   },
-  getUserWithoutPassword: (user: IUser): IUserWithoutPassword => ({
-    id: user.id,
-    firstName: user.firstName,
-    lastName: user.lastName,
-    email: user.email,
-    role: user.role,
-  }),
-  unknownUser: (): IUser => ({
-    id: 0,
-    firstName: 'Jane',
-    lastName: 'Doe',
-    email: 'jane@doe.com',
-    password: 'jane',
-    role: 'User',
-  }),
-  getAllUsers: () => {
-    const usersWithoutPassword = users.map((user) => {
-      const userWithoutPassword = usersServices.getUserWithoutPassword(user);
-      return userWithoutPassword;
-    });
-    return usersWithoutPassword;
+  getAllUsers: async () => {
+    const [users]: [IUserSQL[], FieldPacket[]] = await pool.query('SELECT id, firstName, lastName, email, role, createdDate FROM users WHERE deletedDate IS NULL;');
+    return users;
   },
-  createUser: async (user: INewUser): Promise<number> => {
-    const id = users.length + 1;
+  createUser: async (user: IUser): Promise<number | Boolean> => {
     const hashedPassword = await authServices.hash(user.password);
-    const newUser: IUser = {
-      id,
+    const newUser = {
       firstName: user.firstName,
       lastName: user.lastName,
       email: user.email,
       password: hashedPassword,
       role: 'User',
     };
-    users.push(newUser);
-    return id;
+    const [result]: [ResultSetHeader, FieldPacket[]] = await pool.query('INSERT INTO users SET ?;', [newUser]);
+    return result.insertId;
   },
-  updateUser: (userToUpdate: IUserWithoutRole): Boolean => {
+  updateUser: async (userToUpdate: IUser): Promise<Boolean> => {
     const {
-      id, firstName, lastName, email, password,
+      id, firstName, lastName, email, password
     } = userToUpdate;
-    const user = usersServices.findUserById(id);
-    if (user && firstName) user.firstName = firstName;
-    if (user && lastName) user.lastName = lastName;
-    if (user && email) user.email = email;
-    if (user && password) user.password = password;
+    const user = await usersServices.findUserById(id!);
+
+    let hashedPassword = null;
+    if (password) {
+      hashedPassword = await authServices.hash(password);
+    }
+    const update = {
+      firstName: firstName || user.firstName,
+      lastName: lastName|| user.lastName,
+      email: email || user.email,
+      password: hashedPassword || user.password,
+    };
+
+    const [result]: [ResultSetHeader, FieldPacket[]] = await pool.query('UPDATE users SET ? WHERE id=?;', [update, id]);
+    if (result.affectedRows < 1) {
+      return false;
+    }
     return true;
   },
-  deleteUser: (id: number): Boolean => {
-    const index = users.findIndex((element) => element.id === id);
-    if (index === -1) return false;
-    users.splice(index, 1);
+  deleteUser: async (id: number): Promise<Boolean> => {
+    const [result]: [ResultSetHeader, FieldPacket[]] = await pool.query('UPDATE users SET deletedDate=? WHERE id=?;', [new Date(), id]);
+    if (result.affectedRows < 1) {
+      return false;
+    }
     return true;
   },
 };

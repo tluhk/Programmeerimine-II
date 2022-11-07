@@ -1,10 +1,10 @@
 import { Request, Response } from 'express';
-import { INewComment } from './interfaces';
+import { IComment } from './interfaces';
 import commentsService from './services';
 
 const commentsController = {
-  getAllComments: (req: Request, res: Response) => {
-    const comments = commentsService.getAllComments();
+  getAllComments: async (req: Request, res: Response) => {
+    const comments = await commentsService.getAllComments();
 
     res.status(200).json({
       success: true,
@@ -12,9 +12,9 @@ const commentsController = {
       comments,
     });
   },
-  getCommentById: (req: Request, res: Response) => {
+  getCommentById: async (req: Request, res: Response) => {
     const id = parseInt(req.params.id, 10);
-    const comment = commentsService.getCommentById(id);
+    const comment = await commentsService.getCommentById(id);
     if (!comment) {
       return res.status(404).json({
         success: false,
@@ -29,33 +29,32 @@ const commentsController = {
       },
     });
   },
-  createComment: (req: Request, res: Response) => {
+  createComment: async (req: Request, res: Response) => {
     const { postId, content } = req.body;
-    let { userId } = req.body;
+    let userId = res.locals.user?.id || null;
     if (!postId || !content) {
       return res.status(400).json({
         success: false,
         message: 'Some data is missing (postId, content)',
       });
     }
-    if (!userId) userId = null;
 
-    const newComment: INewComment = {
+    const newComment: IComment = {
       userId,
       postId,
       content,
     };
 
-    const id: number = commentsService.createComment(newComment);
+    const id: number = await commentsService.createComment(newComment);
 
     return res.status(201).json({
       success: true,
       message: `comment with id ${id} created`,
     });
   },
-  deleteComment: (req: Request, res: Response) => {
+  deleteComment: async (req: Request, res: Response) => {
     const id = parseInt(req.params.id, 10);
-    const result = commentsService.deleteComment(id);
+    const result = await commentsService.deleteComment(id);
     if (!result) {
       return res.status(404).json({
         success: false,

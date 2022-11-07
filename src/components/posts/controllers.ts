@@ -1,20 +1,20 @@
 import { Request, Response } from 'express';
 import commentsService from '../comments/services';
-import { INewPost, IPostToUpdate } from './interfaces';
+import { IPost, IPostSQL } from './interfaces';
 import postsService from './services';
 
 const postsController = {
-  getAllPosts: (req: Request, res: Response) => {
-    const postsWithStatusesAndUsers = postsService.getAllPosts();
+  getAllPosts: async (req: Request, res: Response) => {
+    const postsWithStatusesAndUsers = await postsService.getAllPosts();
     res.status(200).json({
       success: true,
       message: 'List of posts',
       posts: postsWithStatusesAndUsers,
     });
   },
-  getPostById: (req: Request, res: Response) => {
+  getPostById: async (req: Request, res: Response) => {
     const id = parseInt(req.params.id, 10);
-    const post = postsService.getPostById(id);
+    const post = await postsService.getPostById(id);
     if (!post) {
       return res.status(404).json({
         success: false,
@@ -22,18 +22,17 @@ const postsController = {
       });
     }
 
-    const postWithStatusAndUser = postsService.getPostWithStatusAndUser(post);
     return res.status(200).json({
       success: true,
       message: 'Post',
       data: {
-        post: postWithStatusAndUser,
+        post,
       },
     });
   },
-  getPostComment: (req: Request, res: Response) => {
+  getPostComment: async (req: Request, res: Response) => {
     const id = parseInt(req.params.id, 10);
-    const comments = commentsService.findCommentsByPostId(id);
+    const comments = await commentsService.findCommentsByPostId(id);
     return res.status(200).json({
       success: true,
       message: `Comments of post with id: ${id}`,
@@ -42,32 +41,33 @@ const postsController = {
       },
     });
   },
-  createPost: (req: Request, res: Response) => {
+  createPost: async (req: Request, res: Response) => {
     const {
-      title, content, userId, statusId,
+      title, content, statusId,
     } = req.body;
-    if (!title || !content || !userId || !statusId) {
+    const userId = res.locals.user?.id;
+    if (!title || !content || !statusId) {
       return res.status(400).json({
         success: false,
         message: 'Some data is missing (title, content, userId, statusId)',
       });
     }
-    const newPost: INewPost = {
+    const newPost: IPost = {
       title,
       content,
-      userId,
       statusId,
+      userId,
     };
-    const id = postsService.createPost(newPost);
+    const id = await postsService.createPost(newPost);
     return res.status(201).json({
       success: true,
       message: `Post with id ${id} created`,
     });
   },
-  updatePost: (req: Request, res: Response) => {
+  updatePost: async (req: Request, res: Response) => {
     const id = parseInt(req.params.id, 10);
     const { title, content, statusId } = req.body;
-    const post = postsService.getPostById(id);
+    const post = await postsService.getPostById(id);
     if (!post) {
       return res.status(404).json({
         success: false,
@@ -80,23 +80,23 @@ const postsController = {
         message: 'Nothing to change',
       });
     }
-    const postToUpdate: IPostToUpdate = {
+    const postToUpdate: IPost = {
       id,
       title,
       content,
       statusId,
     };
 
-    postsService.updatePost(postToUpdate);
+    await postsService.updatePost(postToUpdate);
 
     return res.status(200).json({
       success: true,
       message: 'Post updated',
     });
   },
-  deletePost: (req: Request, res: Response) => {
+  deletePost: async  (req: Request, res: Response) => {
     const id = parseInt(req.params.id, 10);
-    const result = postsService.deletePost(id);
+    const result = await postsService.deletePost(id);
     if (!result) {
       return res.status(404).json({
         success: false,

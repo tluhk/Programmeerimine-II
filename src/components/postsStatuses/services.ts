@@ -1,17 +1,15 @@
-import { postStatuses } from '../../mockData';
-import { IPostStatus } from './interfaces';
+import { FieldPacket } from 'mysql2';
+import { IPostStatusSQL  } from './interfaces';
+import pool from '../../database';
 
 const postStatusesService = {
-  getAllPostStatuses: (): IPostStatus[] => postStatuses,
-  getPostStatusById: (id: number): IPostStatus | undefined => {
-    let postStatus: IPostStatus | undefined = postStatuses.find((element) => element.id === id);
-    if (!postStatus) {
-      postStatus = {
-        id: 0,
-        status: 'Unknown',
-      };
-    }
-    return postStatus;
+  getAllPostStatuses: async (): Promise<IPostStatusSQL[]> => {
+    const [statuses]: [IPostStatusSQL[], FieldPacket[]] = await pool.query('SELECT * FROM statuses WHERE deletedDate IS NULL;');
+    return statuses;
+  },
+  getPostStatusById: async (id: number): Promise<IPostStatusSQL> => {
+    const [statuses]: [IPostStatusSQL[], FieldPacket[]] = await pool.query('SELECT * FROM statuses WHERE id = ? AND deletedDate IS NULL;', [id]);
+    return statuses[0];
   },
 };
 
