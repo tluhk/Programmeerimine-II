@@ -1,58 +1,50 @@
+import { FieldPacket, ResultSetHeader } from 'mysql2';
+import pool from '../../database';
 import { posts } from '../../mockData';
 import postStatusesService from '../postsStatuses/services';
-import { IUser } from '../users/interfaces';
 import usersServices from '../users/services';
 import { IPost, IPostSQL } from './interfaces';
 
 const postsService = {
-  getAllPosts: () => {
-    const postsWithStatusesAndUsers = posts.map((post) => {
-      const postWithStatusAndUser = postsService.getPostWithStatusAndUser(post);
-      return postWithStatusAndUser;
-    });
-    return postsWithStatusesAndUsers;
+  getAllPosts: async (): Promise<IPostSQL[]> => {
+    const [posts]: [IPostSQL[], FieldPacket[]] = await pool.query('SELECT * FROM posts WHERE deletedDate IS NULL;');
+    return posts;
   },
-  getPostById: (id: number): IPost | undefined => {
-    const post = posts.find((element) => element.id === id);
-    return post;
+  getPostById: async (id: number): Promise<IPostSQL> => {
+    const [posts]: [IPostSQL[], FieldPacket[]] = await pool.query('SELECT * FROM posts WHERE id = ? AND deletedDate IS NULL;', [id]);
+    return posts[0];
   },
-  createPost: (newPost: IPost): number => {
-    const id = posts.length + 1;
+  createPost: async (newPost: IPost): Promise<number> => {
     const post: IPost = {
-      id,
       ...newPost,
     };
-    posts.push(post);
-    return id;
+    const [result]: [ResultSetHeader, FieldPacket[]] = await pool.query('INSERT INTO posts SET ?;', [post]);
+    return result.insertId;
   },
-  updatePost: (postToUpdate: IPost) => {
+  updatePost: async (postToUpdate: IPost) => {
     const {
       id, title, content, statusId,
     } = postToUpdate;
-    const post = postsService.getPostById(id!);
-    if (post && title) post.title = title;
-    if (post && content) post.content = content;
-    if (post && statusId) post.statusId = statusId;
-    return true;
-  },
-  deletePost: (id: number): Boolean => {
-    const index = posts.findIndex((element) => element.id === id);
-    if (index === -1) return false;
-    posts.splice(index, 1);
-    return true;
-  },
-  getPostWithStatusAndUser: (post: IPost) => {
-    const postStatus = postStatusesService.getPostStatusById(post.statusId!);
-    let user = usersServices.findUserById(post.userId!);
+    const post = await postsService.getPostById(id!);
 
-    const postWithStatusAndUser = {
-      id: post.id,
-      title: post.title,
-      content: post.content,
-      user,
-      status: postStatus,
+    const update = {
+      title: title || post.title,
+      content: content|| post.content,
+      statusId: statusId || post.statusId,
     };
-    return postWithStatusAndUser;
+    
+    const [result]: [ResultSetHeader, FieldPacket[]] = await pool.query('UPDATE posts SET ? WHERE id = ?;', [update, id]);
+    if (result.affectedRows < 1) {
+      return false;
+    }
+    return true;
+  },
+  deletePost: async (id: number): Promise<Boolean> => {
+    const [result]: [ResultSetHeader, FieldPacket[]] = await pool.query('UPDATE posts SET deletedDate = ? WHERE id = ?;', [Date.now(), id]);
+    if (result.affectedRows < 1) {
+      return false;
+    }
+    return true;
   },
 };
 

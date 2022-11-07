@@ -8,6 +8,6 @@ interface IPost {
     statusId?: number;
 }
 
-interface IPostSQL extends IPost {}
+interface IPostSQL extends IPost, RowDataPacket {}
 
 export { IPost, IPostSQL };
