@@ -3,17 +3,17 @@ import { IPostStatus } from './interfaces';
 import postStatusesService from './services';
 
 const postStatusesController = {
-  getAllPostStatuses: (req: Request, res: Response) => {
-    const postStatuses: IPostStatus[] = postStatusesService.getAllPostStatuses();
+  getAllPostStatuses: async (req: Request, res: Response) => {
+    const postStatuses: IPostStatus[] = await postStatusesService.getAllPostStatuses();
     res.status(200).json({
       success: true,
       message: 'List of post statuses',
       postStatuses,
     });
   },
-  getPostStatusById: (req: Request, res: Response) => {
+  getPostStatusById: async (req: Request, res: Response) => {
     const id = parseInt(req.params.id, 10);
-    const postStatus: IPostStatus | undefined = postStatusesService.getPostStatusById(id);
+    const postStatus: IPostStatus | undefined = await postStatusesService.getPostStatusById(id);
     if (!postStatus) {
       return res.status(404).json({
         success: false,

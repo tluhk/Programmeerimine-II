@@ -1,11 +1,10 @@
 import { RowDataPacket } from 'mysql2';
 
-interface INewPostStatus {
+interface IPostStatus {
+    id?: number;
     status: string;
 }
 
-interface IPostStatus extends INewPostStatus {
-    id: number;
-}
+interface IPostStatusSQL extends IPostStatus, RowDataPacket {}
 
-export { INewPostStatus, IPostStatus };
+export { IPostStatus, IPostStatusSQL };
