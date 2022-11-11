@@ -4,7 +4,7 @@
   "description": "TLU HK Programmeerimine II aine raames kirjutatud kood",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "mocha -r ts-node/register 'tests/**/*.ts' --exit",
     "start": "nodemon"
   },
   "repository": {
@@ -29,16 +29,23 @@
     "jsonwebtoken": "^8.5.1",
     "mysql2": "^2.3.3",
     "nodemon": "^2.0.19",
+    "nyc": "^15.1.0",
     "swagger-ui-express": "^4.5.0",
     "ts-node": "^10.9.1",
     "typescript": "^4.8.3"
   },
   "devDependencies": {
+    "@types/chai": "^4.3.4",
     "@types/cors": "^2.8.12",
+    "@types/mocha": "^10.0.0",
+    "@types/supertest": "^2.0.12",
     "@typescript-eslint/eslint-plugin": "^5.40.0",
     "@typescript-eslint/parser": "^5.40.0",
+    "chai": "^4.3.7",
     "eslint": "^8.25.0",
     "eslint-config-airbnb-base": "^15.0.0",
-    "eslint-plugin-import": "^2.26.0"
+    "eslint-plugin-import": "^2.26.0",
+    "mocha": "^10.1.0",
+    "supertest": "^6.3.1"
   }
 }
